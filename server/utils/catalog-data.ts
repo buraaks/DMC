@@ -1,32 +1,34 @@
 import type { Brand, Product, ProductFilters, SiteSettings, StockStatus } from '../../shared/catalog'
 import { randomUUID } from 'node:crypto'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import {
-
+  brandPlaceholderLogoPath,
   createSlugFromText,
   defaultSiteSettings,
+  ensureProductImagePaths,
   ensureStringArray,
   isStockStatus,
   sortBrands,
 } from '../../shared/catalog'
+import { createHttpError } from './http-error'
+import { ensureRuntimeStorage, getStorageDataDirectory, getStorageUploadsDirectory } from './storage'
 
 const productsFileName = 'products.json'
 const brandsFileName = 'brands.json'
 const siteSettingsFileName = 'site-settings.json'
 
 export function getDataDirectory(baseDir = process.cwd()) {
-  return resolve(baseDir, 'data')
+  return getStorageDataDirectory(baseDir)
 }
 
-export function getPublicUploadsDirectory(baseDir = process.cwd()) {
-  return resolve(baseDir, 'public', 'uploads')
+export function getUploadsDirectory(baseDir = process.cwd()) {
+  return getStorageUploadsDirectory(baseDir)
 }
 
 async function ensureStorage(baseDir = process.cwd()) {
-  await mkdir(getDataDirectory(baseDir), { recursive: true })
-  await mkdir(getPublicUploadsDirectory(baseDir), { recursive: true })
+  await ensureRuntimeStorage(baseDir)
 }
 
 async function readJsonFile<T>(fileName: string, fallback: T, baseDir = process.cwd()): Promise<T> {
@@ -128,7 +130,7 @@ function sanitizeBrand(input: Partial<Brand>, brands: Brand[], currentBrand?: Br
     id: currentBrand?.id || input.id || randomUUID(),
     slug: ensureUniqueBrandSlug(createSlugFromText(input.slug?.trim() || name), brands, currentBrand?.id),
     name,
-    logoPath: input.logoPath?.trim() || currentBrand?.logoPath || '/uploads/brand-placeholder.svg',
+    logoPath: input.logoPath?.trim() || currentBrand?.logoPath || brandPlaceholderLogoPath,
     sortOrder: Number.isFinite(sortOrder) ? sortOrder : currentBrand?.sortOrder || brands.length + 1,
   }
 }
@@ -136,6 +138,9 @@ function sanitizeBrand(input: Partial<Brand>, brands: Brand[], currentBrand?: Br
 function sanitizeProduct(input: Partial<Product>, products: Product[], currentProduct?: Product): Product {
   const name = input.name?.trim() || currentProduct?.name || 'Yeni Ürün'
   const shortDescription = input.shortDescription?.trim() || currentProduct?.shortDescription || ''
+  const imagePaths = ensureProductImagePaths(
+    ensureStringArray(input.imagePaths ?? currentProduct?.imagePaths),
+  )
 
   return {
     id: currentProduct?.id || input.id || randomUUID(),
@@ -147,7 +152,7 @@ function sanitizeProduct(input: Partial<Product>, products: Product[], currentPr
     category: input.category?.trim() || currentProduct?.category || '',
     stockStatus: sanitizeStockStatus(input.stockStatus ?? currentProduct?.stockStatus),
     whatsappMessage: input.whatsappMessage?.trim() || currentProduct?.whatsappMessage || `Merhaba, ${name} ürünü hakkında bilgi almak istiyorum.`,
-    imagePaths: ensureStringArray(input.imagePaths ?? currentProduct?.imagePaths),
+    imagePaths,
     relatedProductIds: ensureStringArray(input.relatedProductIds ?? currentProduct?.relatedProductIds)
       .filter(relatedId => relatedId !== (currentProduct?.id || input.id)),
     featured: Boolean(input.featured ?? currentProduct?.featured),
@@ -251,7 +256,7 @@ export async function updateProduct(id: string, input: Partial<Product>, baseDir
   const currentProduct = products.find(product => product.id === id)
 
   if (!currentProduct) {
-    throw createError({
+    throw createHttpError({
       statusCode: 404,
       statusMessage: 'Ürün bulunamadı.',
     })
@@ -292,7 +297,7 @@ export async function updateBrand(id: string, input: Partial<Brand>, baseDir = p
   const currentBrand = brands.find(brand => brand.id === id)
 
   if (!currentBrand) {
-    throw createError({
+    throw createHttpError({
       statusCode: 404,
       statusMessage: 'Marka bulunamadı.',
     })

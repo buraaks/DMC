@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Product } from '~~/shared/catalog'
+import { computed } from 'vue'
+import { getPrimaryProductImagePath } from '~~/shared/catalog'
 
 const props = defineProps<{
   product: Product
@@ -7,6 +9,8 @@ const props = defineProps<{
   whatsappNumber?: string
   adminHref?: string
 }>()
+
+const primaryImagePath = computed(() => getPrimaryProductImagePath(props.product.imagePaths))
 
 function openCard() {
   if (props.adminHref) {
@@ -24,7 +28,7 @@ function openCard() {
   >
     <div class="relative aspect-[16/11] overflow-hidden">
       <img
-        :src="product.imagePaths[0]"
+        :src="primaryImagePath"
         :alt="product.name"
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         loading="lazy"

@@ -1,7 +1,14 @@
 import type { Brand, Product } from '../../shared/catalog'
 import { describe, expect, it } from 'vitest'
 import { buildBreadcrumbSchema, buildProductSchema, toAbsoluteUrl } from '../../app/utils/seo'
-import { buildWhatsAppLink, filterCatalogProducts, resolveRelatedCatalogProducts } from '../../shared/catalog'
+import {
+  buildWhatsAppLink,
+  createSlugFromText,
+  ensureProductImagePaths,
+  filterCatalogProducts,
+  productPlaceholderImagePath,
+  resolveRelatedCatalogProducts,
+} from '../../shared/catalog'
 
 const brands: Brand[] = [
   {
@@ -65,6 +72,15 @@ describe('catalog helpers', () => {
   it('prefers explicit related products', () => {
     expect(resolveRelatedCatalogProducts(products[0], products).map(product => product.id))
       .toEqual(['prd-2'])
+  })
+
+  it('transliterates Turkish characters for slugs', () => {
+    expect(createSlugFromText('Çıkış modülü')).toBe('cikis-modulu')
+    expect(createSlugFromText('ısı sensörü')).toBe('isi-sensoru')
+  })
+
+  it('adds a placeholder image when a product has no images', () => {
+    expect(ensureProductImagePaths([])).toEqual([productPlaceholderImagePath])
   })
 })
 

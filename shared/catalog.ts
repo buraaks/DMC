@@ -1,4 +1,6 @@
 export const HOST_SESSION_COOKIE = 'dmc_host_session'
+export const brandPlaceholderLogoPath = '/uploads/brand-placeholder.svg'
+export const productPlaceholderImagePath = '/uploads/product-placeholder.svg'
 
 export const stockStatusOptions = ['stokta', 'sinirli', 'temin'] as const
 
@@ -110,6 +112,15 @@ export const defaultSiteSettings: SiteSettings = {
   },
 }
 
+const turkishCharacterMap: Record<string, string> = {
+  ı: 'i',
+  ğ: 'g',
+  ü: 'u',
+  ş: 's',
+  ö: 'o',
+  ç: 'c',
+}
+
 export function isStockStatus(value: unknown): value is StockStatus {
   return typeof value === 'string' && stockStatusOptions.includes(value as StockStatus)
 }
@@ -130,13 +141,24 @@ export function ensureStringArray(value: unknown): string[] {
 }
 
 export function createSlugFromText(value: string): string {
-  return value
+  const normalized = Array.from(value.trim().toLocaleLowerCase('tr'))
+    .map(character => turkishCharacterMap[character] || character)
+    .join('')
+
+  return normalized
     .normalize('NFD')
     .replace(/[\u0300-\u036F]/g, '')
-    .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
     .trim()
+}
+
+export function ensureProductImagePaths(imagePaths: string[]): string[] {
+  return imagePaths.length > 0 ? imagePaths : [productPlaceholderImagePath]
+}
+
+export function getPrimaryProductImagePath(imagePaths: string[]): string {
+  return ensureProductImagePaths(imagePaths)[0]
 }
 
 export function buildWhatsAppLink(phone: string, message: string): string {

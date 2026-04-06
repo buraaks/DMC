@@ -4,13 +4,10 @@ import process from 'node:process'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
 
-  devtools: { enabled: true },
+  devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
   modules: [
     '@nuxt/ui',
-    '@pinia/nuxt',
-    '@nuxt/test-utils/module',
-    '@vueuse/nuxt',
   ],
 
   css: [
@@ -18,10 +15,10 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
-    hostAdminPassword: process.env.HOST_ADMIN_PASSWORD || 'change-this-password',
+    hostAdminPassword: '',
     public: {
       siteName: 'DMC Otomasyon',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || '',
     },
   },
 

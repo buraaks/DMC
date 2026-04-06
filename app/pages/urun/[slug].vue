@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Brand, Product, SiteSettings } from '~~/shared/catalog'
 import { computed } from 'vue'
-import { defaultSiteSettings, resolveRelatedCatalogProducts } from '~~/shared/catalog'
+import { defaultSiteSettings, getPrimaryProductImagePath, resolveRelatedCatalogProducts } from '~~/shared/catalog'
 import { buildBreadcrumbSchema, buildOrganizationSchema, buildProductSchema, toAbsoluteUrl } from '~/utils/seo'
 
-const runtimeConfig = useRuntimeConfig()
+const siteUrl = useSiteUrl()
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -22,6 +22,7 @@ if (!product.value) {
 
 const siteSettings = computed(() => settings.value ?? defaultSiteSettings)
 const brand = computed(() => (brands.value ?? []).find(item => item.id === product.value?.brandId))
+const primaryImagePath = computed(() => getPrimaryProductImagePath(product.value?.imagePaths ?? []))
 const relatedProducts = computed(() => {
   if (!product.value) {
     return []
@@ -35,13 +36,13 @@ useSeoMeta({
   description: () => product.value?.seoDescription || product.value?.shortDescription,
   ogTitle: () => product.value?.seoTitle || `${product.value?.name} | ${siteSettings.value.siteName}`,
   ogDescription: () => product.value?.seoDescription || product.value?.shortDescription,
-  ogImage: () => toAbsoluteUrl(runtimeConfig.public.siteUrl, product.value?.imagePaths[0] || siteSettings.value.hero.imagePath),
+  ogImage: () => toAbsoluteUrl(siteUrl.value, primaryImagePath.value || siteSettings.value.hero.imagePath),
 })
 
 useJsonLd(() => ([
-  buildOrganizationSchema(runtimeConfig.public.siteUrl, siteSettings.value),
-  buildProductSchema(runtimeConfig.public.siteUrl, product.value!, brand.value?.name),
-  buildBreadcrumbSchema(runtimeConfig.public.siteUrl, [
+  buildOrganizationSchema(siteUrl.value, siteSettings.value),
+  buildProductSchema(siteUrl.value, product.value!, brand.value?.name),
+  buildBreadcrumbSchema(siteUrl.value, [
     { name: 'Anasayfa', path: '/' },
     { name: 'Ürünler', path: '/urunler' },
     { name: product.value?.name || 'Ürün', path: `/urun/${product.value?.slug}` },

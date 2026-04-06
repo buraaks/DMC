@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const headers = import.meta.server ? useRequestHeaders(['cookie']) : undefined
 
   try {
-    const session = await $fetch<{ authenticated: boolean }>('/api/host/session', { headers })
+    const session = await $fetch<{ authenticated: boolean, configured: boolean }>('/api/host/session', { headers })
 
     if (session.authenticated && to.path === loginPath) {
       const redirectTarget = typeof to.query.redirect === 'string' ? to.query.redirect : '/host'

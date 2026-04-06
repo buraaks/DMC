@@ -1,20 +1,10 @@
 import { randomUUID } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
-import { extname, resolve } from 'node:path'
-import { getPublicUploadsDirectory } from '~~/server/utils/catalog-data'
+import { resolve } from 'node:path'
+import { getUploadsDirectory } from '~~/server/utils/catalog-data'
 import { requireHostAuth } from '~~/server/utils/host-auth'
-
-function mimeTypeToExtension(mimeType?: string) {
-  const map: Record<string, string> = {
-    'image/jpeg': '.jpg',
-    'image/png': '.png',
-    'image/webp': '.webp',
-    'image/svg+xml': '.svg',
-    'image/gif': '.gif',
-  }
-
-  return mimeType ? map[mimeType] || '' : ''
-}
+import { ensureRuntimeStorage } from '~~/server/utils/storage'
+import { validateImageUpload } from '~~/server/utils/upload'
 
 export default defineEventHandler(async (event) => {
   requireHostAuth(event)
@@ -29,9 +19,15 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const extension = extname(imageFile.filename || '') || mimeTypeToExtension(imageFile.type) || '.bin'
-  const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}${extension}`
-  const filePath = resolve(getPublicUploadsDirectory(), fileName)
+  const validatedFile = validateImageUpload({
+    data: imageFile.data,
+    type: imageFile.type,
+  })
+
+  await ensureRuntimeStorage()
+
+  const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}${validatedFile.extension}`
+  const filePath = resolve(getUploadsDirectory(), fileName)
 
   await writeFile(filePath, imageFile.data)
 

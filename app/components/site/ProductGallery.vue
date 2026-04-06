@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { ensureProductImagePaths } from '~~/shared/catalog'
 
 const props = defineProps<{
   imagePaths: string[]
@@ -7,19 +8,20 @@ const props = defineProps<{
 }>()
 
 const activeIndex = ref(0)
+const galleryImages = computed(() => ensureProductImagePaths(props.imagePaths))
 
 watch(() => props.imagePaths, () => {
   activeIndex.value = 0
 })
 
-const activeImage = computed(() => props.imagePaths[activeIndex.value] || props.imagePaths[0])
+const activeImage = computed(() => galleryImages.value[activeIndex.value] || galleryImages.value[0])
 
 function showPrevious() {
-  activeIndex.value = activeIndex.value === 0 ? props.imagePaths.length - 1 : activeIndex.value - 1
+  activeIndex.value = activeIndex.value === 0 ? galleryImages.value.length - 1 : activeIndex.value - 1
 }
 
 function showNext() {
-  activeIndex.value = activeIndex.value === props.imagePaths.length - 1 ? 0 : activeIndex.value + 1
+  activeIndex.value = activeIndex.value === galleryImages.value.length - 1 ? 0 : activeIndex.value + 1
 }
 </script>
 
@@ -28,7 +30,7 @@ function showNext() {
     <div class="surface-panel-strong relative overflow-hidden rounded-[2rem]">
       <img :src="activeImage" :alt="productName" class="aspect-[4/3] w-full object-cover">
 
-      <div v-if="imagePaths.length > 1" class="absolute inset-x-4 bottom-4 flex items-center justify-between">
+      <div v-if="galleryImages.length > 1" class="absolute inset-x-4 bottom-4 flex items-center justify-between">
         <button type="button" class="button-secondary px-4 py-2" @click="showPrevious">
           Geri
         </button>
@@ -38,9 +40,9 @@ function showNext() {
       </div>
     </div>
 
-    <div v-if="imagePaths.length > 1" class="grid grid-cols-3 gap-3">
+    <div v-if="galleryImages.length > 1" class="grid grid-cols-3 gap-3">
       <button
-        v-for="(image, index) in imagePaths"
+        v-for="(image, index) in galleryImages"
         :key="image"
         type="button"
         class="overflow-hidden rounded-2xl border transition"

@@ -1,5 +1,4 @@
 import { resolve } from 'node:path'
-import { defineVitestProject } from '@nuxt/test-utils/config'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -25,13 +24,6 @@ export default defineConfig({
           environment: 'node',
         },
       },
-      await defineVitestProject({
-        test: {
-          name: 'nuxt',
-          include: ['test/nuxt/*.{test,spec}.ts'],
-          environment: 'nuxt',
-        },
-      }),
     ],
   },
 })

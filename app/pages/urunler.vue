@@ -4,7 +4,7 @@ import { computed, reactive, watch } from 'vue'
 import { defaultSiteSettings, filterCatalogProducts } from '~~/shared/catalog'
 import { buildBreadcrumbSchema, buildOrganizationSchema, toAbsoluteUrl } from '~/utils/seo'
 
-const runtimeConfig = useRuntimeConfig()
+const siteUrl = useSiteUrl()
 const route = useRoute()
 const router = useRouter()
 
@@ -78,12 +78,12 @@ useSeoMeta({
   description: () => 'PLC, HMI, sürücü, güvenlik ve sensör ürünlerini filtreleyerek inceleyin.',
   ogTitle: () => `Ürünler | ${siteSettings.value.siteName}`,
   ogDescription: () => 'Marka, kategori ve stok durumuna göre otomasyon ürünleri kataloğu.',
-  ogImage: () => toAbsoluteUrl(runtimeConfig.public.siteUrl, siteSettings.value.hero.imagePath),
+  ogImage: () => toAbsoluteUrl(siteUrl.value, siteSettings.value.hero.imagePath),
 })
 
 useJsonLd(() => ([
-  buildOrganizationSchema(runtimeConfig.public.siteUrl, siteSettings.value),
-  buildBreadcrumbSchema(runtimeConfig.public.siteUrl, [
+  buildOrganizationSchema(siteUrl.value, siteSettings.value),
+  buildBreadcrumbSchema(siteUrl.value, [
     { name: 'Anasayfa', path: '/' },
     { name: 'Ürünler', path: '/urunler' },
   ]),

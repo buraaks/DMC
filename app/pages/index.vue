@@ -4,7 +4,7 @@ import { computed } from 'vue'
 import { defaultSiteSettings } from '~~/shared/catalog'
 import { buildBreadcrumbSchema, buildOrganizationSchema, toAbsoluteUrl } from '~/utils/seo'
 
-const runtimeConfig = useRuntimeConfig()
+const siteUrl = useSiteUrl()
 
 const { data: settings } = await useAsyncData<SiteSettings>('site-settings', () => $fetch('/api/site-settings'))
 const { data: brands } = await useAsyncData<Brand[]>('brands', () => $fetch('/api/brands'))
@@ -28,12 +28,12 @@ useSeoMeta({
   description: () => siteSettings.value.hero.description,
   ogTitle: () => `${siteSettings.value.siteName} | PLC ve Endüstriyel Otomasyon`,
   ogDescription: () => siteSettings.value.hero.description,
-  ogImage: () => toAbsoluteUrl(runtimeConfig.public.siteUrl, siteSettings.value.hero.imagePath),
+  ogImage: () => toAbsoluteUrl(siteUrl.value, siteSettings.value.hero.imagePath),
 })
 
 useJsonLd(() => ([
-  buildOrganizationSchema(runtimeConfig.public.siteUrl, siteSettings.value),
-  buildBreadcrumbSchema(runtimeConfig.public.siteUrl, [
+  buildOrganizationSchema(siteUrl.value, siteSettings.value),
+  buildBreadcrumbSchema(siteUrl.value, [
     { name: 'Anasayfa', path: '/' },
   ]),
 ]))

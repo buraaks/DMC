@@ -1,10 +1,8 @@
 import { listProducts } from '~~/server/utils/catalog-data'
-
-const trailingSlashRE = /\/$/u
+import { getSiteUrl } from '~~/server/utils/site-url'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig(event)
-  const siteUrl = config.public.siteUrl.replace(trailingSlashRE, '')
+  const siteUrl = getSiteUrl(event)
   const products = await listProducts()
 
   const staticRoutes = ['/', '/urunler', '/iletisim']

@@ -1,4 +1,5 @@
-import type { Product, SiteSettings } from '~~/shared/catalog'
+import type { Product, SiteSettings } from '../../shared/catalog'
+import { ensureProductImagePaths } from '../../shared/catalog'
 
 export interface BreadcrumbItem {
   name: string
@@ -47,7 +48,7 @@ export function buildProductSchema(baseUrl: string, product: Product, brandName?
     '@type': 'Product',
     'name': product.name,
     'description': product.seoDescription || product.shortDescription,
-    'image': product.imagePaths.map(imagePath => toAbsoluteUrl(baseUrl, imagePath)),
+    'image': ensureProductImagePaths(product.imagePaths).map(imagePath => toAbsoluteUrl(baseUrl, imagePath)),
     'sku': product.id,
     'brand': brandName
       ? {
