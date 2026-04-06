@@ -1,0 +1,324 @@
+# PLC / Otomasyon Sitesi Yapı ve Görünüm Planı
+
+## Genel Yapı
+
+- Giriş / kayıt sistemi olmayacak.
+- Satın alma sistemi yerine WhatsApp üzerinden iletişim kurulacak.
+- Yönetici paneli sadece özel URL ile erişilebilir olacak:
+  -`siteadi.com/host`
+- Ana sitede yönetici paneline yönlendiren herhangi bir buton olmayacak.
+- Referans görünüm:
+  - Daha modern, daha temiz ve biraz geniş boşluklu yapı
+
+## Teknik Yapı
+
+-Nuxt 4
+-Vue 3
+-Tailwind CSS
+-Nuxt UI
+
+## SEO
+
+-Her ürün için ayrı meta title ve description
+-Schema markup
+-Open Graph görselleri
+-Hızlı açılış süresi
+-Mobil uyumluluk
+-Lazy load görseller
+-Sitemap ve robots.txt desteği
+
+---
+
+# Site Sayfaları
+
+1. Anasayfa
+2. Ürünler
+3. İletişim
+4. Ürün Detay Sayfası
+5. Yönetici Paneli
+
+---
+
+# Header
+
+## Yapı
+
+- Sol tarafta logo
+- Sağ tarafta:
+  - Anasayfa
+  - Ürünler
+  - İletişim
+  - Tema değiştirici (açık / koyu)
+
+## Görünüm
+
+- Header yukarıya sabit olacak
+- Kenarlarda boşluk olacak
+- Hafif blur efekti olabilir
+- Açık temada beyaz arka plan
+- Koyu temada koyu gri / siyah arka plan
+- Altında ince border veya gölge olabilir
+- Mobilde hamburger menüye dönüşecek
+
+---
+
+# Footer
+
+## İçerik
+
+- Logo
+- Copyright
+- Adres
+- Telefon
+- E-posta
+- Sosyal medya ikonları
+  - Instagram
+  - WhatsApp
+  - Facebook
+  - LinkedIn
+
+## Görünüm
+
+- Koyu arka plan
+- Açık renk yazılar
+- Sosyal medya ikonları sadece logolu butonlar şeklinde olacak
+- Footer üst kısmında ince ayırıcı çizgi olabilir
+
+---
+
+# Anasayfa
+
+## Bölümler
+
+### 1. Header
+
+### 2. Banner
+
+- Büyük endüstriyel görsel
+- Büyük başlık
+  - Örnek:
+    - Endüstriyel Otomasyon ve PLC Çözümleri
+- Kısa açıklama
+- WhatsApp iletişim butonu
+- Ürünler sayfasına yönlendirme butonu
+
+### 3. Hakkımızda
+
+- Kısa tanıtım metni
+- Firma ne yapıyor
+- Hangi ürünleri satıyor
+- Teknik destek sunduğunu anlatan kısa açıklama
+
+### 4. Marka Logoları
+
+- Marka logoları yatay kartlar halinde gösterilecek
+- Tıklanınca kullanıcı ürünler sayfasına gidecek
+- Gittiğinde ilgili marka filtresi otomatik seçilecek
+
+Örnek markalar:
+- Siemens
+- Schneider
+- Delta
+- Yaskawa
+- Wileand
+- Wenglor
+- Ewor
+
+### 5. Önerilen 5 Ürün
+
+- Kart yapısı
+- Ürün fotoğrafı
+- Ürün adı
+- Kısa bilgi
+- Stok durumu
+- WhatsApp sipariş butonu
+
+### 6. Footer
+
+---
+
+# Ürünler Sayfası
+
+## Bölümler
+
+### 1. Header
+
+### 2. Arama Alanı
+
+- Ürün arama kutusu
+- Yazarken filtreleme yapabilir
+
+### 3. Filtreleme Sistemi
+
+Filtreler:
+- Marka
+- Kategori
+- Stok durumu
+
+### 4. Ürün Kartları
+
+Her kartta:
+- Ürün fotoğrafı
+- Ürün adı
+- Kısa bilgi
+- Stok durumu
+- WhatsApp logolu yeşil tonlu sipariş butonu
+
+Kartın tamamına tıklanınca ürün detay sayfasına gidecek.
+
+## Görünüm
+
+- Masaüstünde 4 sütun
+- Tablet görünümünde 2 sütun
+- Mobilde tek sütun
+- Kartlar hover olduğunda hafif yukarı kalkabilir
+- Hafif gölge ve yuvarlak köşe kullanılabilir
+
+### 5. Footer
+
+---
+
+# Ürün Detay Sayfası
+
+## Bölümler
+
+### 1. Header
+
+### 2. Ürün Görsel Alanı
+
+- Birden fazla ürün fotoğrafı olabilir
+- Sağ ve sol ok butonları ile geçiş yapılabilir
+- Küçük thumbnail görseller olabilir
+
+### 3. Ürün Bilgileri
+
+- Ürün adı
+- Kısa açıklama
+- Teknik bilgiler
+- Stok durumu
+- WhatsApp sipariş butonu
+
+### 4. Benzer Ürünler
+
+- Aynı kategoriden ürünler gösterilecek
+- Kart yapısı ana ürün kartları ile aynı olacak
+
+### 5. Footer
+
+---
+
+# WhatsApp Sipariş Sistemi
+
+- Kullanıcı sepete eklemek yerine WhatsApp üzerinden iletişim kuracak
+- Buton yeşil tonlu olacak
+- WhatsApp logosu olacak
+
+---
+
+# Yönetici Paneli
+
+## Erişim
+
+- Gizli URL üzerinden erişilecek
+- Ana site üzerinde görünmeyecek
+
+## Yönetici Paneli Sayfaları
+
+1. Dashboard
+2. Ürün Yönetimi
+3. Sayfa Özelleştirme
+4. İletişim Bilgileri Yönetimi
+5. Marka Yönetimi
+
+---
+
+# Dashboard
+
+- Toplam ürün sayısı
+- Aktif marka sayısı
+- Son eklenen ürünler
+- Hızlı düzenleme bağlantıları
+
+---
+
+# Ürün Yönetimi
+
+## Ürün Listesi
+
+- Ana sitedeki ürün kartlarına benzer görünüm
+- Her ürün kartında:
+  - Ürün fotoğrafı
+  - Ürün adı
+  - Kategori
+  - Stok durumu
+  - Düzenle butonu
+
+## Düzenleme Sayfası
+
+Alanlar:
+- Ürün adı
+- Kısa açıklama
+- Teknik bilgiler
+- Marka
+- Kategori
+- Stok durumu
+- WhatsApp mesajı
+- Ürün görselleri
+- Benzer ürünler
+
+Butonlar:
+- Kaydet
+- Önizleme
+- Ürünü sil
+
+Silme işleminde kullanıcıya uyarı gösterilecek:
+
+`Bu ürünü silmek istediğinize emin misiniz?`
+
+---
+
+# Sayfa Özelleştirme
+
+Yönetici aşağıdaki alanları düzenleyebilecek:
+
+- Banner görselleri
+- Banner başlıkları
+- Ana sayfadaki önerilen ürünler
+- Hakkımızda yazısı
+- Marka logoları
+- Footer iletişim bilgileri
+- Sosyal medya linkleri
+- WhatsApp numarası
+- Site logosu
+- İletişim sayfası bilgileri
+- Markaları
+
+---
+
+# Tasarım Tarzı
+
+## Açık Tema
+
+- Beyaz arka plan
+- Açık gri kartlar
+- Siyah yazılar
+- Vurgu rengi olarak yeşil ve lacivert
+
+## Koyu Tema
+
+- Koyu gri / siyah arka plan
+- Açık renk yazılar
+- Kartlarda hafif transparan görünüm
+- Yeşil WhatsApp butonları belirgin olacak
+
+## Genel Stil
+
+- Modern
+- Kurumsal
+- Temiz
+- Büyük boşluklar
+- Yuvarlatılmış kartlar
+- Hafif gölgeler
+- Yumuşak hover animasyonları
+- Çok parlak efektler kullanılmayacak
+- Endüstriyel ama premium görünüm hedeflenecek

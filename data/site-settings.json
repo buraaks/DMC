@@ -1,0 +1,37 @@
+{
+  "siteName": "DMC Otomasyon",
+  "siteTagline": "PLC, sürücü ve endüstriyel otomasyon ürünlerinde hızlı tedarik",
+  "logoPath": "/DMClogo.svg",
+  "footerNote": "PLC, HMI, sürücü ve sensör ihtiyaçlarınız için hızlı geri dönüş ve teknik danışmanlık.",
+  "hero": {
+    "eyebrow": "PLC / OTOMASYON / TEKNİK DESTEK",
+    "title": "Endüstriyel otomasyon projeleri için güvenilir ürün ve hızlı teknik destek.",
+    "description": "DMC Otomasyon; PLC, sürücü, HMI, sensör ve güvenlik ürünlerinde sahaya uygun bileşenleri doğru marka eşleşmeleriyle sunar.",
+    "imagePath": "/uploads/hero-industrial.svg",
+    "primaryCtaLabel": "WhatsApp ile Ulaşın",
+    "secondaryCtaLabel": "Ürünleri İnceleyin"
+  },
+  "aboutTitle": "Bütün endüstriyel tedarik ihtiyaçlarınız için",
+  "aboutBody": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "brandSectionTitle": "Çalıştığımız markalar",
+  "featuredSectionTitle": "Öne çıkan ürünler",
+  "contactTitle": "Projeye uygun teklif ve ürün doğrulaması için bize ulaşın",
+  "contactIntro": "Stok teyidi, alternatif ürün ve uygulama uyumu için bize WhatsApp, telefon veya e-posta üzerinden ulaşabilirsiniz.",
+  "featuredProductIds": [
+    "prd-simatic-s7-1200",
+    "prd-siemens-softstarter",
+    "prd-altivar-320",
+    "prd-delta-hmi",
+    "prd-yaskawa-ga700"
+  ],
+  "whatsappNumber": "905551234567",
+  "address": "İkitelli Organize Sanayi Bölgesi, Başakşehir / İstanbul",
+  "phone": "+90 555 123 45 67",
+  "email": "info@dmcotomasyon.com",
+  "socialLinks": {
+    "instagram": "https://instagram.com/dmcotomasyon",
+    "whatsapp": "https://wa.me/905551234567",
+    "facebook": "https://facebook.com/dmcotomasyon",
+    "linkedin": "https://linkedin.com/company/dmcotomasyon"
+  }
+}

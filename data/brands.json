@@ -1,0 +1,51 @@
+[
+  {
+    "id": "brand-siemens",
+    "slug": "siemens",
+    "name": "Siemens",
+    "logoPath": "/uploads/brand-siemens.svg",
+    "sortOrder": 1
+  },
+  {
+    "id": "brand-schneider",
+    "slug": "schneider-electric",
+    "name": "Schneider Electric",
+    "logoPath": "/uploads/brand-schneider.svg",
+    "sortOrder": 2
+  },
+  {
+    "id": "brand-delta",
+    "slug": "delta",
+    "name": "Delta",
+    "logoPath": "/uploads/brand-delta.svg",
+    "sortOrder": 3
+  },
+  {
+    "id": "brand-yaskawa",
+    "slug": "yaskawa",
+    "name": "Yaskawa",
+    "logoPath": "/uploads/brand-yaskawa.svg",
+    "sortOrder": 4
+  },
+  {
+    "id": "brand-wieland",
+    "slug": "wieland",
+    "name": "Wieland",
+    "logoPath": "/uploads/brand-wieland.svg",
+    "sortOrder": 5
+  },
+  {
+    "id": "brand-wenglor",
+    "slug": "wenglor",
+    "name": "Wenglor",
+    "logoPath": "/uploads/brand-wenglor.svg",
+    "sortOrder": 6
+  },
+  {
+    "id": "brand-ewon",
+    "slug": "ewon",
+    "name": "Ewon",
+    "logoPath": "/uploads/brand-ewon.svg",
+    "sortOrder": 7
+  }
+]
