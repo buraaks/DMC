@@ -1,11 +1,52 @@
-import { copyFile, mkdir, readdir } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
+import { copyFile, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { isAbsolute, resolve, sep } from 'node:path'
 import process from 'node:process'
+import { get as getBlob, put } from '@vercel/blob'
 
 const seedDataFiles = ['brands.json', 'products.json', 'site-settings.json'] as const
+const blobDataDirectory = 'catalog-data'
+const blobJsonCacheControlMaxAge = 60
 
 function resolveAppPath(baseDir: string, targetPath: string) {
   return isAbsolute(targetPath) ? targetPath : resolve(baseDir, targetPath)
+}
+
+function hasBlobStorageToken() {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim())
+}
+
+function getBlobDataPath(fileName: string) {
+  return `${blobDataDirectory}/${fileName}`
+}
+
+async function streamToString(stream: ReadableStream<Uint8Array>) {
+  return new Response(stream).text()
+}
+
+async function readBlobJsonFile<T>(fileName: string, fallback: T): Promise<T> {
+  const blobResponse = await getBlob(getBlobDataPath(fileName), {
+    access: 'private',
+    useCache: false,
+  })
+
+  if (blobResponse?.statusCode === 200 && blobResponse.stream) {
+    const raw = await streamToString(blobResponse.stream)
+    return JSON.parse(raw) as T
+  }
+
+  await writeBlobJsonFile(fileName, fallback)
+  return fallback
+}
+
+async function writeBlobJsonFile<T>(fileName: string, payload: T) {
+  await put(getBlobDataPath(fileName), `${JSON.stringify(payload, null, 2)}\n`, {
+    access: 'private',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    cacheControlMaxAge: blobJsonCacheControlMaxAge,
+    contentType: 'application/json; charset=utf-8',
+  })
 }
 
 export function getStorageRootDirectory(baseDir = process.cwd()) {
@@ -93,6 +134,66 @@ export async function ensureRuntimeStorage(baseDir = process.cwd()) {
   }
 
   await copyMissingFiles(getSeedUploadsDirectory(baseDir), storageUploadsDirectory)
+}
+
+export function isBlobStorageEnabled() {
+  return hasBlobStorageToken()
+}
+
+export async function readStorageDataFile<T>(fileName: string, fallback: T, baseDir = process.cwd()): Promise<T> {
+  if (isBlobStorageEnabled()) {
+    return readBlobJsonFile(fileName, fallback)
+  }
+
+  await ensureRuntimeStorage(baseDir)
+  const filePath = resolve(getStorageDataDirectory(baseDir), fileName)
+
+  try {
+    const raw = await readFile(filePath, 'utf8')
+    return JSON.parse(raw) as T
+  }
+  catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      await writeStorageDataFile(fileName, fallback, baseDir)
+      return fallback
+    }
+
+    throw error
+  }
+}
+
+export async function writeStorageDataFile<T>(fileName: string, payload: T, baseDir = process.cwd()) {
+  if (isBlobStorageEnabled()) {
+    await writeBlobJsonFile(fileName, payload)
+    return
+  }
+
+  await ensureRuntimeStorage(baseDir)
+  const filePath = resolve(getStorageDataDirectory(baseDir), fileName)
+  await writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8')
+}
+
+export async function saveUploadedImage(
+  file: { data: Uint8Array, extension: string, contentType: string },
+  baseDir = process.cwd(),
+) {
+  const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}${file.extension}`
+
+  if (isBlobStorageEnabled()) {
+    const blob = await put(`uploads/${fileName}`, file.data, {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: file.contentType,
+    })
+
+    return blob.url
+  }
+
+  await ensureRuntimeStorage(baseDir)
+  const filePath = resolve(getStorageUploadsDirectory(baseDir), fileName)
+  await writeFile(filePath, file.data)
+
+  return `/uploads/${fileName}`
 }
 
 export function resolveUploadStoragePath(relativePath: string, baseDir = process.cwd()) {

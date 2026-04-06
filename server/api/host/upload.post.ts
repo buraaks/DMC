@@ -1,9 +1,5 @@
-import { randomUUID } from 'node:crypto'
-import { writeFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
-import { getUploadsDirectory } from '~~/server/utils/catalog-data'
 import { requireHostAuth } from '~~/server/utils/host-auth'
-import { ensureRuntimeStorage } from '~~/server/utils/storage'
+import { saveUploadedImage } from '~~/server/utils/storage'
 import { validateImageUpload } from '~~/server/utils/upload'
 
 export default defineEventHandler(async (event) => {
@@ -24,14 +20,13 @@ export default defineEventHandler(async (event) => {
     type: imageFile.type,
   })
 
-  await ensureRuntimeStorage()
-
-  const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}${validatedFile.extension}`
-  const filePath = resolve(getUploadsDirectory(), fileName)
-
-  await writeFile(filePath, imageFile.data)
+  const imagePath = await saveUploadedImage({
+    data: imageFile.data,
+    extension: validatedFile.extension,
+    contentType: validatedFile.contentType,
+  })
 
   return {
-    path: `/uploads/${fileName}`,
+    path: imagePath,
   }
 })

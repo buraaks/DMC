@@ -1,7 +1,7 @@
 import { extname } from 'node:path'
 import { createHttpError } from './http-error'
 
-export const maxImageUploadSize = 5 * 1024 * 1024
+export const maxImageUploadSize = Math.floor(4.5 * 1024 * 1024)
 
 const fileTypeMatchers = [
   {
@@ -67,7 +67,7 @@ export function validateImageUpload(file: { data: Uint8Array, type?: string | nu
   if (file.data.length > maxImageUploadSize) {
     throw createHttpError({
       statusCode: 400,
-      statusMessage: 'Görsel boyutu 5 MB sınırını aşıyor.',
+      statusMessage: 'Görsel boyutu 4.5 MB sınırını aşıyor.',
     })
   }
 

@@ -1,7 +1,5 @@
 import type { Brand, Product, ProductFilters, SiteSettings, StockStatus } from '../../shared/catalog'
 import { randomUUID } from 'node:crypto'
-import { readFile, writeFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
 import process from 'node:process'
 import {
   brandPlaceholderLogoPath,
@@ -12,61 +10,26 @@ import {
   isStockStatus,
   sortBrands,
 } from '../../shared/catalog'
+import { cloneSeedBrands, cloneSeedProducts, cloneSeedSiteSettings } from './catalog-seed'
 import { createHttpError } from './http-error'
-import { ensureRuntimeStorage, getStorageDataDirectory, getStorageUploadsDirectory } from './storage'
+import { readStorageDataFile, writeStorageDataFile } from './storage'
 
 const productsFileName = 'products.json'
 const brandsFileName = 'brands.json'
 const siteSettingsFileName = 'site-settings.json'
 
-export function getDataDirectory(baseDir = process.cwd()) {
-  return getStorageDataDirectory(baseDir)
-}
-
-export function getUploadsDirectory(baseDir = process.cwd()) {
-  return getStorageUploadsDirectory(baseDir)
-}
-
-async function ensureStorage(baseDir = process.cwd()) {
-  await ensureRuntimeStorage(baseDir)
-}
-
-async function readJsonFile<T>(fileName: string, fallback: T, baseDir = process.cwd()): Promise<T> {
-  await ensureStorage(baseDir)
-  const filePath = resolve(getDataDirectory(baseDir), fileName)
-
-  try {
-    const raw = await readFile(filePath, 'utf8')
-    return JSON.parse(raw) as T
-  }
-  catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      await writeJsonFile(fileName, fallback, baseDir)
-      return fallback
-    }
-
-    throw error
-  }
-}
-
-async function writeJsonFile<T>(fileName: string, payload: T, baseDir = process.cwd()) {
-  await ensureStorage(baseDir)
-  const filePath = resolve(getDataDirectory(baseDir), fileName)
-  await writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8')
-}
-
 export async function listProducts(baseDir = process.cwd()): Promise<Product[]> {
-  return readJsonFile<Product[]>(productsFileName, [], baseDir)
+  return readStorageDataFile<Product[]>(productsFileName, cloneSeedProducts(), baseDir)
 }
 
 export async function listBrands(baseDir = process.cwd()): Promise<Brand[]> {
-  const brands = await readJsonFile<Brand[]>(brandsFileName, [], baseDir)
+  const brands = await readStorageDataFile<Brand[]>(brandsFileName, cloneSeedBrands(), baseDir)
   return sortBrands(brands)
 }
 
 export async function getSiteSettings(baseDir = process.cwd()): Promise<SiteSettings> {
   const products = await listProducts(baseDir)
-  const settings = await readJsonFile<SiteSettings>(siteSettingsFileName, defaultSiteSettings, baseDir)
+  const settings = await readStorageDataFile<SiteSettings>(siteSettingsFileName, cloneSeedSiteSettings(), baseDir)
   return normalizeSiteSettings(settings, products)
 }
 
@@ -224,7 +187,7 @@ export async function getProductById(id: string, baseDir = process.cwd()) {
 }
 
 async function writeSiteSettings(settings: SiteSettings, baseDir = process.cwd()) {
-  await writeJsonFile(siteSettingsFileName, settings, baseDir)
+  await writeStorageDataFile(siteSettingsFileName, settings, baseDir)
 }
 
 async function syncFeaturedProducts(products: Product[], changedProduct: Product, baseDir = process.cwd()) {
@@ -246,7 +209,7 @@ export async function createProduct(input: Partial<Product>, baseDir = process.c
   const products = await listProducts(baseDir)
   const product = sanitizeProduct(input, products)
   const nextProducts = [product, ...products]
-  await writeJsonFile(productsFileName, nextProducts, baseDir)
+  await writeStorageDataFile(productsFileName, nextProducts, baseDir)
   await syncFeaturedProducts(nextProducts, product, baseDir)
   return product
 }
@@ -264,7 +227,7 @@ export async function updateProduct(id: string, input: Partial<Product>, baseDir
 
   const nextProduct = sanitizeProduct({ ...currentProduct, ...input, id }, products, currentProduct)
   const nextProducts = products.map(product => product.id === id ? nextProduct : product)
-  await writeJsonFile(productsFileName, nextProducts, baseDir)
+  await writeStorageDataFile(productsFileName, nextProducts, baseDir)
   await syncFeaturedProducts(nextProducts, nextProduct, baseDir)
   return nextProduct
 }
@@ -278,7 +241,7 @@ export async function deleteProduct(id: string, baseDir = process.cwd()) {
       relatedProductIds: product.relatedProductIds.filter(relatedId => relatedId !== id),
     }))
 
-  await writeJsonFile(productsFileName, nextProducts, baseDir)
+  await writeStorageDataFile(productsFileName, nextProducts, baseDir)
   const settings = await getSiteSettings(baseDir)
   settings.featuredProductIds = settings.featuredProductIds.filter(featuredId => featuredId !== id)
   await writeSiteSettings(settings, baseDir)
@@ -288,7 +251,7 @@ export async function createBrand(input: Partial<Brand>, baseDir = process.cwd()
   const brands = await listBrands(baseDir)
   const brand = sanitizeBrand(input, brands)
   const nextBrands = sortBrands([...brands, brand])
-  await writeJsonFile(brandsFileName, nextBrands, baseDir)
+  await writeStorageDataFile(brandsFileName, nextBrands, baseDir)
   return brand
 }
 
@@ -305,18 +268,18 @@ export async function updateBrand(id: string, input: Partial<Brand>, baseDir = p
 
   const nextBrand = sanitizeBrand({ ...currentBrand, ...input, id }, brands, currentBrand)
   const nextBrands = sortBrands(brands.map(brand => brand.id === id ? nextBrand : brand))
-  await writeJsonFile(brandsFileName, nextBrands, baseDir)
+  await writeStorageDataFile(brandsFileName, nextBrands, baseDir)
   return nextBrand
 }
 
 export async function deleteBrand(id: string, baseDir = process.cwd()) {
   const brands = await listBrands(baseDir)
   const nextBrands = brands.filter(brand => brand.id !== id)
-  await writeJsonFile(brandsFileName, nextBrands, baseDir)
+  await writeStorageDataFile(brandsFileName, nextBrands, baseDir)
 
   const products = await listProducts(baseDir)
   const nextProducts = products.map(product => product.brandId === id ? { ...product, brandId: '' } : product)
-  await writeJsonFile(productsFileName, nextProducts, baseDir)
+  await writeStorageDataFile(productsFileName, nextProducts, baseDir)
 }
 
 export async function updateSiteConfiguration(input: Partial<SiteSettings>, baseDir = process.cwd()) {

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">DMC Placeholder</title>
+  <desc id="desc">Urun gorseli bulunamadiginda gosterilen yer tutucu.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#dfe9f3" />
+      <stop offset="100%" stop-color="#f8fbff" />
+    </linearGradient>
+  </defs>
+  <rect width="960" height="720" fill="url(#bg)" rx="36" />
+  <g fill="none" stroke="#0b6b52" stroke-linecap="round" stroke-linejoin="round" stroke-width="22">
+    <rect x="180" y="154" width="600" height="412" rx="28" />
+    <path d="M248 470l120-122 108 96 120-154 116 180" />
+    <circle cx="346" cy="268" r="42" />
+  </g>
+  <text x="480" y="628" fill="#0f172a" font-family="Arial, sans-serif" font-size="34" font-weight="700" text-anchor="middle">
+    DMC Otomasyon
+  </text>
+</svg>
