@@ -23,6 +23,7 @@ function createFormState(product?: Product | null) {
     name: product?.name ?? '',
     slug: product?.slug ?? '',
     shortDescription: product?.shortDescription ?? '',
+    priceText: product?.priceText ?? '',
     technicalDetailsText: (product?.technicalDetails ?? []).join('\n'),
     brandId: product?.brandId ?? '',
     category: product?.category ?? '',
@@ -77,6 +78,7 @@ async function saveProduct() {
       name: form.name,
       slug: form.slug || createSlugFromText(form.name),
       shortDescription: form.shortDescription,
+      priceText: form.priceText,
       technicalDetails: form.technicalDetailsText,
       brandId: form.brandId,
       category: form.category,
@@ -151,6 +153,10 @@ async function deleteProduct() {
         <div>
           <label class="field-label" for="product-short-description">Kısa Açıklama</label>
           <textarea id="product-short-description" v-model="form.shortDescription" class="textarea-shell" />
+        </div>
+        <div>
+          <label class="field-label" for="product-price">Fiyat Bilgisi</label>
+          <input id="product-price" v-model="form.priceText" class="input-shell" placeholder="Örn: 12.500 TL + KDV">
         </div>
         <div>
           <label class="field-label" for="product-technical-details">Teknik Bilgiler</label>

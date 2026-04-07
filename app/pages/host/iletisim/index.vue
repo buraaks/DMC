@@ -65,6 +65,10 @@ async function saveContactDetails() {
             <label class="field-label">Adres</label>
             <textarea v-model="form.address" class="textarea-shell" />
           </div>
+          <div>
+            <label class="field-label">Google Maps Konum Linki</label>
+            <input v-model="form.mapUrl" class="input-shell" placeholder="Google Haritalar linki veya embed kodu">
+          </div>
         </div>
 
         <div class="space-y-5">

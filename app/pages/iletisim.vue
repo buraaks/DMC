@@ -16,6 +16,18 @@ const socialItems = computed(() => [
   { label: 'LinkedIn', href: siteSettings.value.socialLinks.linkedin },
 ])
 
+const mapEmbedUrl = computed(() => {
+  const url = siteSettings.value.mapUrl
+  if (url && url.includes('embed')) return url
+  return `https://maps.google.com/maps?q=${encodeURIComponent(siteSettings.value.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`
+})
+
+const mapExternalUrl = computed(() => {
+  const url = siteSettings.value.mapUrl
+  if (url && !url.includes('embed') && !url.includes('<iframe')) return url
+  return `https://maps.google.com/maps?q=${encodeURIComponent(siteSettings.value.address)}`
+})
+
 useSeoMeta({
   title: () => `İletişim | ${siteSettings.value.siteName}`,
   description: () => siteSettings.value.contactIntro,
@@ -35,7 +47,7 @@ useJsonLd(() => ([
 
 <template>
   <div class="section-shell space-y-10 pb-12">
-    <section class="surface-panel-strong rounded-[2.4rem] p-8 md:p-10">
+    <section class="surface-panel-strong rounded-[2.4rem] p-8 md:p-10 mt-6 lg:mt-8">
       <p class="section-kicker">
         İletişim
       </p>
@@ -47,6 +59,18 @@ useJsonLd(() => ([
       </p>
     </section>
 
+    <section class="surface-panel-strong overflow-hidden rounded-[2.4rem] h-[300px] md:h-[400px]">
+      <iframe
+        :src="mapEmbedUrl"
+        width="100%"
+        height="100%"
+        style="border:0;"
+        allowfullscreen="false"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      />
+    </section>
+
     <section class="grid gap-5 lg:grid-cols-[1fr_0.95fr]">
       <div class="surface-panel rounded-[2rem] p-8">
         <p class="text-xs font-black uppercase tracking-[0.26em] text-[color:var(--brand-green)]">
@@ -54,10 +78,15 @@ useJsonLd(() => ([
         </p>
         <div class="mt-6 space-y-6">
           <div>
-            <p class="field-label">
-              Adres
-            </p>
-            <p class="text-base leading-7 text-[color:var(--text-secondary)]">
+            <div class="flex items-center justify-between">
+              <p class="field-label">
+                Adres
+              </p>
+              <a :href="mapExternalUrl" target="_blank" rel="noreferrer" class="text-xs font-semibold text-[color:var(--brand-green)] hover:underline">
+                Haritada Aç
+              </a>
+            </div>
+            <p class="mt-1 text-base leading-7 text-[color:var(--text-secondary)]">
               {{ siteSettings.address }}
             </p>
           </div>

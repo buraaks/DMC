@@ -10,10 +10,10 @@ const socialItems = computed(() => {
   const settings = props.settings
 
   return [
-    { label: 'Instagram', href: settings?.socialLinks.instagram, icon: 'instagram' as const },
-    { label: 'WhatsApp', href: settings?.socialLinks.whatsapp, icon: 'whatsapp' as const },
-    { label: 'Facebook', href: settings?.socialLinks.facebook, icon: 'facebook' as const },
-    { label: 'LinkedIn', href: settings?.socialLinks.linkedin, icon: 'linkedin' as const },
+    { label: 'Instagram', href: settings?.socialLinks.instagram, icon: 'lucide:instagram' },
+    { label: 'WhatsApp', href: settings?.socialLinks.whatsapp, icon: 'mdi:whatsapp' },
+    { label: 'Facebook', href: settings?.socialLinks.facebook, icon: 'mdi:facebook' },
+    { label: 'LinkedIn', href: settings?.socialLinks.linkedin, icon: 'mdi:linkedin' },
   ].filter(item => item.href)
 })
 </script>

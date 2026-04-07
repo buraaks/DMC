@@ -48,7 +48,6 @@
   - Anasayfa
   - Ürünler
   - İletişim
-  - Tema değiştirici (açık / koyu)
 
 ## Görünüm
 

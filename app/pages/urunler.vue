@@ -92,16 +92,13 @@ useJsonLd(() => ([
 
 <template>
   <div class="section-shell space-y-12 pb-12">
-    <section class="surface-panel-strong rounded-[2.4rem] p-8 md:p-10">
+    <section class="surface-panel-strong rounded-[2.4rem] p-8 md:p-10 mt-6 lg:mt-8">
       <div class="space-y-4">
-        <p class="section-kicker">
-          Ürün Kataloğu
-        </p>
         <h1 class="section-heading">
-          Marka ve kategori bazında filtrelenebilir ürün arşivi.
+          Tüm Ürünler
         </h1>
-        <p class="section-copy">
-          Arama kutusunu kullanarak ürün adına göre filtreleyebilir, marka ve stok durumunu query parametreleriyle paylaşılabilir şekilde yönetebilirsiniz.
+        <p class="section-copy max-w-3xl">
+          Marka ve kategori bazında filtrelenebilir ürün arşivimiz. Arama kutusunu kullanarak ürün adına göre filtreleyebilir, marka ve stok durumunu kolayca yönetebilirsiniz.
         </p>
       </div>
     </section>

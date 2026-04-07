@@ -35,7 +35,10 @@ async function uploadInto(target: 'logoPath' | 'heroImagePath', event: Event) {
       form.logoPath = imagePath
     }
     else {
-      form.hero.imagePath = imagePath
+      if (!Array.isArray(form.hero.imagePaths)) {
+        form.hero.imagePaths = []
+      }
+      form.hero.imagePaths.push(imagePath)
     }
   }
   finally {
@@ -92,12 +95,20 @@ async function saveSettings() {
             <textarea v-model="form.hero.description" class="textarea-shell" />
           </div>
           <div>
-            <label class="field-label">Banner Görseli</label>
+            <label class="field-label">Banner Görselleri (Slider)</label>
             <p class="mb-3 text-sm text-[color:var(--text-muted)]">
-              Anasayfa giriş alanında yalnızca bu görsel gösterilir.
+              Anasayfa giriş alanında gösterilecek banner görselleri.
             </p>
             <input type="file" accept="image/*" class="input-shell" @change="(event) => uploadInto('heroImagePath', event)">
-            <img :src="form.hero.imagePath" alt="Banner görseli" class="mt-3 aspect-[16/10] w-full rounded-[1.5rem] object-cover">
+            <div class="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div v-for="(path, i) in form.hero.imagePaths" :key="i" class="relative group">
+                <img :src="path" alt="Banner görseli" class="aspect-[16/10] w-full rounded-[1rem] object-cover">
+                <button type="button" @click="form.hero.imagePaths.splice(i, 1)" class="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-black shadow hover:bg-red-500 hover:text-white transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+            </div>
+            <p v-if="!form.hero.imagePaths || form.hero.imagePaths.length === 0" class="mt-3 text-sm text-red-500">En az bir görsel eklemelisiniz.</p>
           </div>
         </div>
 

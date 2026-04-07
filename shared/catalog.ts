@@ -21,6 +21,7 @@ export interface Product {
   featured: boolean
   seoTitle: string
   seoDescription: string
+  priceText?: string
 }
 
 export interface Brand {
@@ -36,6 +37,7 @@ export interface HeroContent {
   title: string
   description: string
   imagePath: string
+  imagePaths: string[]
   primaryCtaLabel: string
   secondaryCtaLabel: string
 }
@@ -64,6 +66,7 @@ export interface SiteSettings {
   address: string
   phone: string
   email: string
+  mapUrl: string
   socialLinks: SocialLinks
 }
 
@@ -90,6 +93,7 @@ export const defaultSiteSettings: SiteSettings = {
     title: 'Endüstriyel otomasyon projeleri için güvenilir ürün ve hızlı teknik destek.',
     description: 'DMC Otomasyon; PLC, sürücü, HMI, sensör ve güvenlik ürünlerinde sahaya uygun bileşenleri doğru marka eşleşmeleriyle sunar.',
     imagePath: '/uploads/hero-industrial.svg',
+    imagePaths: ['/uploads/hero-industrial.svg', '/uploads/hero-industrial.svg', '/uploads/hero-industrial.svg'],
     primaryCtaLabel: 'WhatsApp ile Ulaşın',
     secondaryCtaLabel: 'Ürünleri İnceleyin',
   },
@@ -104,6 +108,7 @@ export const defaultSiteSettings: SiteSettings = {
   address: 'İkitelli Organize Sanayi Bölgesi, Başakşehir / İstanbul',
   phone: '+90 555 123 45 67',
   email: 'info@dmcotomasyon.com',
+  mapUrl: '',
   socialLinks: {
     instagram: 'https://instagram.com/dmcotomasyon',
     whatsapp: 'https://wa.me/905551234567',

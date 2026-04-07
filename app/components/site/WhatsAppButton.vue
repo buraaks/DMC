@@ -21,7 +21,7 @@ const href = computed(() => buildWhatsAppLink(props.phone, props.message))
     class="button-whatsapp"
     :class="fullWidth ? 'w-full' : ''"
   >
-    <span class="text-xs font-black tracking-[0.18em]">WA</span>
+    <SiteSocialIcon name="mdi:whatsapp" class="h-5 w-5" />
     <span>WhatsApp Sipariş</span>
   </a>
 </template>

@@ -121,6 +121,7 @@ function sanitizeProduct(input: Partial<Product>, products: Product[], currentPr
     featured: Boolean(input.featured ?? currentProduct?.featured),
     seoTitle: input.seoTitle?.trim() || currentProduct?.seoTitle || `${name} | DMC Otomasyon`,
     seoDescription: input.seoDescription?.trim() || currentProduct?.seoDescription || shortDescription || `${name} için teklif ve stok bilgisi alın.`,
+    priceText: input.priceText?.trim() ?? currentProduct?.priceText ?? '',
   }
 }
 
@@ -128,6 +129,10 @@ function normalizeSiteSettings(input: Partial<SiteSettings>, products: Product[]
   const featuredProductIds = ensureStringArray(input.featuredProductIds)
     .filter(id => products.some(product => product.id === id))
     .slice(0, 5)
+
+  const fallbackImagePath = input.hero?.imagePath || defaultSiteSettings.hero.imagePath;
+  const rawImagePaths = input.hero?.imagePaths && input.hero.imagePaths.length > 0 ? input.hero.imagePaths : [fallbackImagePath];
+  const heroImagePaths = ensureStringArray(rawImagePaths);
 
   return {
     siteName: input.siteName?.trim() || defaultSiteSettings.siteName,
@@ -138,7 +143,8 @@ function normalizeSiteSettings(input: Partial<SiteSettings>, products: Product[]
       eyebrow: input.hero?.eyebrow?.trim() || defaultSiteSettings.hero.eyebrow,
       title: input.hero?.title?.trim() || defaultSiteSettings.hero.title,
       description: input.hero?.description?.trim() || defaultSiteSettings.hero.description,
-      imagePath: input.hero?.imagePath?.trim() || defaultSiteSettings.hero.imagePath,
+      imagePath: heroImagePaths[0] || fallbackImagePath,
+      imagePaths: heroImagePaths,
       primaryCtaLabel: input.hero?.primaryCtaLabel?.trim() || defaultSiteSettings.hero.primaryCtaLabel,
       secondaryCtaLabel: input.hero?.secondaryCtaLabel?.trim() || defaultSiteSettings.hero.secondaryCtaLabel,
     },
@@ -153,6 +159,7 @@ function normalizeSiteSettings(input: Partial<SiteSettings>, products: Product[]
     address: input.address?.trim() || defaultSiteSettings.address,
     phone: input.phone?.trim() || defaultSiteSettings.phone,
     email: input.email?.trim() || defaultSiteSettings.email,
+    mapUrl: input.mapUrl?.trim() || defaultSiteSettings.mapUrl,
     socialLinks: {
       instagram: input.socialLinks?.instagram?.trim() || defaultSiteSettings.socialLinks.instagram,
       whatsapp: input.socialLinks?.whatsapp?.trim() || defaultSiteSettings.socialLinks.whatsapp,
