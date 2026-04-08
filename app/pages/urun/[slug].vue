@@ -6,9 +6,9 @@ import { buildBreadcrumbSchema, buildOrganizationSchema, buildProductSchema, toA
 
 const siteUrl = useSiteUrl()
 const route = useRoute()
-const slug = route.params.slug as string
+const identifier = route.params.slug as string
 
-const { data: product } = await useAsyncData<Product>(`product-${slug}`, () => $fetch(`/api/products/${slug}`))
+const { data: product } = await useAsyncData<Product>(`product-${identifier}`, () => $fetch(`/api/products/${identifier}`))
 const { data: products } = await useAsyncData<Product[]>('product-list', () => $fetch('/api/products'))
 const { data: brands } = await useAsyncData<Brand[]>('brands', () => $fetch('/api/brands'))
 const { data: settings } = await useAsyncData<SiteSettings>('site-settings', () => $fetch('/api/site-settings'))
@@ -45,7 +45,7 @@ useJsonLd(() => ([
   buildBreadcrumbSchema(siteUrl.value, [
     { name: 'Anasayfa', path: '/' },
     { name: 'Ürünler', path: '/urunler' },
-    { name: product.value?.name || 'Ürün', path: `/urun/${product.value?.slug}` },
+    { name: product.value?.name || 'Ürün', path: `/urun/${product.value?.productCode || product.value?.slug}` },
   ]),
 ]))
 </script>

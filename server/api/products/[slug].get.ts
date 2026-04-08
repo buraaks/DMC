@@ -1,4 +1,4 @@
-import { getProductBySlug } from '~~/server/utils/catalog-data'
+import { getProductByPublicIdentifier } from '~~/server/utils/catalog-data'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const product = await getProductBySlug(slug)
+  const product = await getProductByPublicIdentifier(slug)
 
   if (!product) {
     throw createError({

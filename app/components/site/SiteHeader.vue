@@ -27,6 +27,9 @@ function isActive(target: string) {
       root: 'border-none bg-transparent backdrop-blur-none shadow-none',
       container: 'mt-4 max-w-[calc(var(--ui-container)-2rem)] sm:max-w-[calc(var(--ui-container)-3rem)] lg:max-w-[calc(var(--ui-container)-5rem)] surface-panel flex items-center justify-between gap-4 rounded-full py-8 md:px-6',
       toggle: 'surface-panel inline-flex h-11 w-11 items-center justify-center rounded-full text-xl md:hidden',
+      content: 'bg-transparent shadow-none ring-0',
+      body: 'bg-transparent',
+      overlay: 'bg-black/35',
     }"
   >
     <template #left>
@@ -62,7 +65,7 @@ function isActive(target: string) {
       </div>
     </template>
 
-    <template #body>
+    <template #content>
       <UContainer class="mt-3 md:hidden">
         <div class="surface-panel flex flex-col gap-2 rounded-[1.75rem] p-3">
           <NuxtLink

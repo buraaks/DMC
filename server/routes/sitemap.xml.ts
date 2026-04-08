@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const products = await listProducts()
 
   const staticRoutes = ['/', '/urunler', '/iletisim']
-  const dynamicRoutes = products.map(product => `/urun/${product.slug}`)
+  const dynamicRoutes = products.map(product => `/urun/${product.productCode || product.slug}`)
 
   const urls = [...staticRoutes, ...dynamicRoutes]
     .map(path => `<url><loc>${siteUrl}${path}</loc></url>`)

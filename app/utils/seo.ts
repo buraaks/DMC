@@ -43,6 +43,8 @@ export function buildOrganizationSchema(baseUrl: string, settings: SiteSettings)
 }
 
 export function buildProductSchema(baseUrl: string, product: Product, brandName?: string) {
+  const productPathIdentifier = product.productCode || product.slug
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -63,7 +65,7 @@ export function buildProductSchema(baseUrl: string, product: Product, brandName?
         : product.stockStatus === 'sinirli'
           ? 'https://schema.org/LimitedAvailability'
           : 'https://schema.org/PreOrder',
-      'url': toAbsoluteUrl(baseUrl, `/urun/${product.slug}`),
+      'url': toAbsoluteUrl(baseUrl, `/urun/${productPathIdentifier}`),
       'priceCurrency': 'TRY',
     },
   }

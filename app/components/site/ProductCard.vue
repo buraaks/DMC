@@ -17,7 +17,7 @@ function openCard() {
     return navigateTo(props.adminHref)
   }
 
-  return navigateTo(`/urun/${props.product.slug}`)
+  return navigateTo(`/urun/${props.product.productCode || props.product.slug}`)
 }
 </script>
 

@@ -75,6 +75,7 @@ const fileUploadUi = {
 
 function createFormState(product?: Product | null) {
   return {
+    productCode: product?.productCode ?? '',
     name: product?.name ?? '',
     slug: product?.slug ?? '',
     shortDescription: product?.shortDescription ?? '',
@@ -113,8 +114,8 @@ const relatedProductItems = computed(() => props.products
   })))
 
 const previewHref = computed(() => {
-  const slug = (form.slug || createSlugFromText(form.name)).trim()
-  return slug ? `/urun/${slug}` : ''
+  const identifier = (form.productCode || form.slug || createSlugFromText(form.name)).trim()
+  return identifier ? `/urun/${identifier}` : ''
 })
 
 watch(() => props.initialProduct, (product) => {
@@ -171,6 +172,7 @@ async function saveProduct() {
 
   try {
     const payload = {
+      productCode: form.productCode,
       name: form.name,
       slug: form.slug || createSlugFromText(form.name),
       shortDescription: form.shortDescription,
@@ -253,6 +255,21 @@ async function deleteProduct() {
   >
     <section class="grid gap-6 xl:grid-cols-[1fr_0.85fr]">
       <div class="space-y-5">
+        <UFormField
+          name="productCode"
+          label="Ürün Kodu"
+          :help="mode === 'create' ? 'Kaydedince otomatik üretilir (MARKA3-KATEGORI3-12345).' : 'Sistem tarafından otomatik üretilen ürün kodu.'"
+          :ui="formFieldUi"
+        >
+          <UInput
+            id="product-code"
+            :model-value="form.productCode || 'Henüz oluşturulmadı'"
+            variant="none"
+            readonly
+            :ui="inputUi"
+          />
+        </UFormField>
+
         <UFormField
           name="name"
           label="Ürün Adı"

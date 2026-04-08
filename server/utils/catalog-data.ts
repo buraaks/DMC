@@ -4,6 +4,7 @@ import process from 'node:process'
 import {
   brandPlaceholderLogoPath,
   createSlugFromText,
+  createProductCodePrefix,
   defaultSiteSettings,
   ensureProductImagePaths,
   ensureStringArray,
@@ -85,6 +86,38 @@ function sanitizeStockStatus(value: unknown): StockStatus {
   return isStockStatus(value) ? value : 'temin'
 }
 
+function createRandomFiveDigitCode(): string {
+  const randomNumber = Math.floor(Math.random() * 100000)
+  return String(randomNumber).padStart(5, '0')
+}
+
+function createUniqueProductCode(
+  products: Product[],
+  brandName: string,
+  categoryName: string,
+  currentProductId?: string,
+): string {
+  const brandPrefix = createProductCodePrefix(brandName || 'marka')
+  const categoryPrefix = createProductCodePrefix(categoryName || 'kategori')
+  const existingCodes = new Set(
+    products
+      .filter(product => product.id !== currentProductId)
+      .map(product => product.productCode)
+      .filter((code): code is string => Boolean(code?.trim())),
+  )
+
+  let attempts = 0
+  while (attempts < 2000) {
+    const candidate = `${brandPrefix}-${categoryPrefix}-${createRandomFiveDigitCode()}`
+    if (!existingCodes.has(candidate)) {
+      return candidate
+    }
+    attempts += 1
+  }
+
+  return `${brandPrefix}-${categoryPrefix}-${String(Date.now()).slice(-5)}`
+}
+
 function sanitizeBrand(input: Partial<Brand>, brands: Brand[], currentBrand?: Brand): Brand {
   const name = input.name?.trim() || currentBrand?.name || 'Yeni Marka'
   const sortOrder = Number(input.sortOrder)
@@ -98,21 +131,27 @@ function sanitizeBrand(input: Partial<Brand>, brands: Brand[], currentBrand?: Br
   }
 }
 
-function sanitizeProduct(input: Partial<Product>, products: Product[], currentProduct?: Product): Product {
+function sanitizeProduct(input: Partial<Product>, products: Product[], brands: Brand[], currentProduct?: Product): Product {
   const name = input.name?.trim() || currentProduct?.name || 'Yeni Ürün'
   const shortDescription = input.shortDescription?.trim() || currentProduct?.shortDescription || ''
+  const brandId = input.brandId?.trim() || currentProduct?.brandId || ''
+  const category = input.category?.trim() || currentProduct?.category || ''
   const imagePaths = ensureProductImagePaths(
     ensureStringArray(input.imagePaths ?? currentProduct?.imagePaths),
   )
+  const selectedBrandName = brands.find(brand => brand.id === brandId)?.name || 'Marka'
 
   return {
     id: currentProduct?.id || input.id || randomUUID(),
+    productCode: currentProduct?.productCode
+      || input.productCode?.trim()
+      || createUniqueProductCode(products, selectedBrandName, category, currentProduct?.id),
     slug: ensureUniqueSlug(createSlugFromText(input.slug?.trim() || name), products, currentProduct?.id),
     name,
     shortDescription,
     technicalDetails: ensureStringArray(input.technicalDetails ?? currentProduct?.technicalDetails),
-    brandId: input.brandId?.trim() || currentProduct?.brandId || '',
-    category: input.category?.trim() || currentProduct?.category || '',
+    brandId,
+    category,
     stockStatus: sanitizeStockStatus(input.stockStatus ?? currentProduct?.stockStatus),
     whatsappMessage: input.whatsappMessage?.trim() || currentProduct?.whatsappMessage || `Merhaba, ${name} ürünü hakkında bilgi almak istiyorum.`,
     imagePaths,
@@ -188,6 +227,11 @@ export async function getProductBySlug(slug: string, baseDir = process.cwd()) {
   return products.find(product => product.slug === slug) || null
 }
 
+export async function getProductByPublicIdentifier(identifier: string, baseDir = process.cwd()) {
+  const products = await listProducts(baseDir)
+  return products.find(product => product.productCode === identifier || product.slug === identifier) || null
+}
+
 export async function getProductById(id: string, baseDir = process.cwd()) {
   const products = await listProducts(baseDir)
   return products.find(product => product.id === id) || null
@@ -214,7 +258,8 @@ async function syncFeaturedProducts(products: Product[], changedProduct: Product
 
 export async function createProduct(input: Partial<Product>, baseDir = process.cwd()) {
   const products = await listProducts(baseDir)
-  const product = sanitizeProduct(input, products)
+  const brands = await listBrands(baseDir)
+  const product = sanitizeProduct(input, products, brands)
   const nextProducts = [product, ...products]
   await writeStorageDataFile(productsFileName, nextProducts, baseDir)
   await syncFeaturedProducts(nextProducts, product, baseDir)
@@ -223,6 +268,7 @@ export async function createProduct(input: Partial<Product>, baseDir = process.c
 
 export async function updateProduct(id: string, input: Partial<Product>, baseDir = process.cwd()) {
   const products = await listProducts(baseDir)
+  const brands = await listBrands(baseDir)
   const currentProduct = products.find(product => product.id === id)
 
   if (!currentProduct) {
@@ -232,7 +278,7 @@ export async function updateProduct(id: string, input: Partial<Product>, baseDir
     })
   }
 
-  const nextProduct = sanitizeProduct({ ...currentProduct, ...input, id }, products, currentProduct)
+  const nextProduct = sanitizeProduct({ ...currentProduct, ...input, id }, products, brands, currentProduct)
   const nextProducts = products.map(product => product.id === id ? nextProduct : product)
   await writeStorageDataFile(productsFileName, nextProducts, baseDir)
   await syncFeaturedProducts(nextProducts, nextProduct, baseDir)

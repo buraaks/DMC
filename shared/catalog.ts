@@ -8,6 +8,7 @@ export type StockStatus = typeof stockStatusOptions[number]
 
 export interface Product {
   id: string
+  productCode?: string
   slug: string
   name: string
   shortDescription: string
@@ -156,6 +157,17 @@ export function createSlugFromText(value: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
     .trim()
+}
+
+function normalizeCodeToken(value: string): string {
+  return createSlugFromText(value)
+    .replace(/-/g, '')
+    .toUpperCase()
+}
+
+export function createProductCodePrefix(value: string): string {
+  const normalized = normalizeCodeToken(value)
+  return normalized.slice(0, 3).padEnd(3, 'X')
 }
 
 export function ensureProductImagePaths(imagePaths: string[]): string[] {
