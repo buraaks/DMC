@@ -55,7 +55,7 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <div class="space-y-20 pt-12 pb-10 md:space-y-28 md:pt-16 lg:pt-20">
+  <div class="space-y-20 pb-10 md:space-y-28">
     <UContainer as="section">
       <div class="group relative overflow-hidden rounded-[2.2rem] border border-black/5 bg-[color:var(--surface-panel-strong)] shadow-[0_24px_70px_rgba(15,23,42,0.12)]">
         <div 

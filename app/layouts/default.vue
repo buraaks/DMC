@@ -8,7 +8,7 @@ const { data: settings } = await useAsyncData<SiteSettings>('site-settings', () 
   <div>
     <SiteHeader :settings="settings || undefined" />
 
-    <UMain>
+    <UMain class="pt-28 md:pt-32">
       <slot />
     </UMain>
 

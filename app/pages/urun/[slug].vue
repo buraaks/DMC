@@ -50,7 +50,7 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <UContainer class="pb-12 pt-8 md:pt-10">
+  <UContainer class="pb-12">
     <nav aria-label="Ürün haritası" class="flex flex-wrap items-center gap-2 text-sm text-[color:var(--text-secondary)]">
       <NuxtLink to="/urunler" class="transition hover:text-[color:var(--text-primary)]">
         Ürünler

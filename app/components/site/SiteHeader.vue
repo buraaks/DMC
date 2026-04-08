@@ -25,7 +25,7 @@ function isActive(target: string) {
     class="fixed inset-x-0 top-0 z-40 bg-transparent px-4 sm:px-6 lg:px-10"
     :ui="{
       root: 'border-none bg-transparent backdrop-blur-none shadow-none',
-      container: 'mt-4 max-w-[calc(var(--ui-container)-2rem)] sm:max-w-[calc(var(--ui-container)-3rem)] lg:max-w-[calc(var(--ui-container)-5rem)] surface-panel flex items-center justify-between gap-4 rounded-full py-8 md:px-6',
+      container: 'mt-4 max-w-[calc(var(--ui-container)-2rem)] sm:max-w-[calc(var(--ui-container)-3rem)] lg:max-w-[calc(var(--ui-container)-5rem)] surface-panel flex items-center justify-between gap-5 rounded-full py-10 md:px-7',
       toggle: 'surface-panel inline-flex h-11 w-11 items-center justify-center rounded-full text-xl md:hidden',
       content: 'bg-transparent shadow-none ring-0',
       body: 'bg-transparent',
@@ -38,7 +38,7 @@ function isActive(target: string) {
           v-if="settings?.logoPath"
           :src="settings.logoPath"
           :alt="settings.siteName"
-          class="h-11 w-auto object-contain"
+          class="h-12 w-auto object-contain"
         >
         <div class="min-w-0">
           <p class="truncate text-sm font-extrabold uppercase tracking-[0.22em] text-[color:var(--brand-green)]">
@@ -57,7 +57,7 @@ function isActive(target: string) {
           v-for="item in navigationItems"
           :key="item.to"
           :to="item.to"
-          class="rounded-full px-4 py-2 text-sm font-semibold transition"
+          class="rounded-full px-5 py-2.5 text-base font-semibold transition"
           :class="isActive(item.to) ? 'bg-[color:var(--brand-blue-soft)] text-[color:var(--brand-blue)]' : 'text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]'"
         >
           {{ item.label }}
@@ -72,7 +72,7 @@ function isActive(target: string) {
             v-for="item in navigationItems"
             :key="item.to"
             :to="item.to"
-            class="rounded-2xl px-4 py-3 text-sm font-semibold"
+            class="rounded-2xl px-5 py-3.5 text-base font-semibold"
             :class="isActive(item.to) ? 'bg-[color:var(--brand-blue-soft)] text-[color:var(--brand-blue)]' : 'text-[color:var(--text-secondary)]'"
           >
             {{ item.label }}
