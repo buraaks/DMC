@@ -90,7 +90,7 @@ useJsonLd(() => ([
       </div>
     </section>
 
-    <section class="section-shell grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+    <UContainer as="section" class="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
       <div class="space-y-5">
         <p class="section-kicker">
           Hakkımızda
@@ -102,9 +102,9 @@ useJsonLd(() => ([
       <p class="section-copy max-w-3xl">
         {{ siteSettings.aboutBody }}
       </p>
-    </section>
+    </UContainer>
 
-    <section class="section-shell">
+    <UContainer as="section">
       <div class="grid gap-4 md:grid-cols-3 xl:grid-cols-4">
         <NuxtLink
           v-for="brand in brandList"
@@ -115,9 +115,9 @@ useJsonLd(() => ([
           <img :src="brand.logoPath" :alt="brand.name" class="max-h-14 w-auto object-contain">
         </NuxtLink>
       </div>
-    </section>
+    </UContainer>
 
-    <section class="section-shell space-y-8">
+    <UContainer as="section" class="space-y-8">
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="space-y-4">
           <p class="section-kicker">
@@ -157,9 +157,9 @@ useJsonLd(() => ([
           />
         </div>
       </div>
-    </section>
+    </UContainer>
 
-    <section class="section-shell">
+    <UContainer as="section">
       <div class="surface-panel-strong grid gap-8 rounded-[2.2rem] p-8 md:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
         <div class="space-y-4">
           <p class="section-kicker">
@@ -177,6 +177,6 @@ useJsonLd(() => ([
           :message="siteSettings.contactTitle"
         />
       </div>
-    </section>
+    </UContainer>
   </div>
 </template>

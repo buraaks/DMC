@@ -20,7 +20,7 @@ const socialItems = computed(() => {
 
 <template>
   <footer class="mt-24 border-t border-[color:var(--surface-border)] bg-[linear-gradient(180deg,rgba(248,251,255,0.92),rgba(231,239,247,0.98))] text-[color:var(--text-primary)]">
-    <div class="section-shell py-14">
+    <UContainer class="py-14">
       <div class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.7fr]">
         <div class="space-y-5">
           <div class="flex items-center gap-4">
@@ -81,6 +81,6 @@ const socialItems = computed(() => {
       <p class="text-sm text-[color:var(--text-muted)]">
         © {{ new Date().getFullYear() }} {{ settings?.siteName || 'DMC Otomasyon' }}. Tüm hakları saklıdır.
       </p>
-    </div>
+    </UContainer>
   </footer>
 </template>

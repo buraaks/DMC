@@ -71,9 +71,6 @@ a {
 }
 
 @layer components {
-  .section-shell {
-    @apply mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10;
-  }
 
   .surface-panel {
     background: var(--surface-panel);

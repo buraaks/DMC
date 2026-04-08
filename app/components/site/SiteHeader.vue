@@ -25,7 +25,7 @@ function isActive(target: string) {
     class="fixed inset-x-0 top-0 z-40 bg-transparent px-4 sm:px-6 lg:px-8"
     :ui="{
       root: 'border-none',
-      container: 'section-shell mt-4 surface-panel rounded-full px-4 py-8 md:px-6 flex items-center justify-between gap-4',
+      container: 'mx-auto px-4 sm:px-6 lg:px-10 max-w-[88rem] mt-4 surface-panel rounded-full py-8 md:px-6 flex items-center justify-between gap-4',
       toggle: 'surface-panel inline-flex h-11 w-11 items-center justify-center rounded-full text-xl md:hidden',
     }"
   >
@@ -63,7 +63,7 @@ function isActive(target: string) {
     </template>
 
     <template #body>
-      <div class="section-shell mt-3 md:hidden">
+      <UContainer class="mt-3 md:hidden">
         <div class="surface-panel flex flex-col gap-2 rounded-[1.75rem] p-3">
           <NuxtLink
             v-for="item in navigationItems"
@@ -75,7 +75,7 @@ function isActive(target: string) {
             {{ item.label }}
           </NuxtLink>
         </div>
-      </div>
+      </UContainer>
     </template>
   </UHeader>
 </template>

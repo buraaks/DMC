@@ -46,7 +46,7 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <div class="section-shell space-y-10 pb-12">
+  <UContainer class="space-y-10 pb-12">
     <section class="surface-panel-strong rounded-[2.4rem] p-8 md:p-10 mt-6 lg:mt-8">
       <p class="section-kicker">
         İletişim
@@ -138,5 +138,5 @@ useJsonLd(() => ([
         </div>
       </div>
     </section>
-  </div>
+  </UContainer>
 </template>

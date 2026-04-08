@@ -51,7 +51,7 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <div class="section-shell space-y-12 pb-12">
+  <UContainer class="space-y-12 pb-12">
     <section class="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
       <SiteProductGallery
         :image-paths="product!.imagePaths"
@@ -125,5 +125,5 @@ useJsonLd(() => ([
         />
       </div>
     </section>
-  </div>
+  </UContainer>
 </template>
