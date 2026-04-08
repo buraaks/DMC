@@ -50,8 +50,25 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <UContainer class="space-y-12 pb-12 pt-4 md:pt-6">
-    <section class="grid items-start gap-8 lg:grid-cols-[1fr_0.95fr]">
+  <UContainer class="pb-12 pt-8 md:pt-10">
+    <nav aria-label="Ürün haritası" class="flex flex-wrap items-center gap-2 text-sm text-[color:var(--text-secondary)]">
+      <NuxtLink to="/urunler" class="transition hover:text-[color:var(--text-primary)]">
+        Ürünler
+      </NuxtLink>
+      <span aria-hidden="true">></span>
+      <NuxtLink
+        :to="{ path: '/urunler', query: { category: product!.category } }"
+        class="transition hover:text-[color:var(--text-primary)]"
+      >
+        {{ product!.category }}
+      </NuxtLink>
+      <span aria-hidden="true">></span>
+      <span class="font-medium text-[color:var(--text-primary)]">
+        {{ product!.name }}
+      </span>
+    </nav>
+
+    <section class="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_0.95fr]">
       <SiteProductGallery
         :image-paths="product!.imagePaths"
         :product-name="product!.name"
@@ -95,12 +112,9 @@ useJsonLd(() => ([
       </div>
     </section>
 
-    <section class="space-y-6">
+    <section v-if="relatedProducts.length" class="mt-12 space-y-6">
       <div class="flex items-end justify-between">
         <div>
-          <p class="section-kicker">
-            Benzer Ürünler
-          </p>
           <h2 class="section-heading mt-4 text-3xl md:text-4xl">
             Aynı kategoriye yakın seçenekler
           </h2>
