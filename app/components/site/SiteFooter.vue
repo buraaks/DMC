@@ -19,7 +19,7 @@ const socialItems = computed(() => {
 </script>
 
 <template>
-  <footer class="mt-24 border-t border-[color:var(--surface-border)] bg-[linear-gradient(180deg,rgba(248,251,255,0.92),rgba(231,239,247,0.98))] text-[color:var(--text-primary)]">
+  <footer class="mt-24 border-t border-(--surface-border) bg-[linear-gradient(180deg,rgba(248,251,255,0.92),rgba(231,239,247,0.98))] text-(--text-primary)">
     <UContainer class="py-14">
       <div class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.7fr]">
         <div class="space-y-5">
@@ -31,7 +31,7 @@ const socialItems = computed(() => {
               class="h-14 w-auto object-contain"
             >
             <div>
-              <p class="text-xs font-black uppercase tracking-[0.28em] text-[color:var(--brand-green)]">
+              <p class="text-xs font-black uppercase tracking-[0.28em] text-(--brand-green)">
                 {{ settings?.siteName || 'DMC Otomasyon' }}
               </p>
               <h2 class="mt-2 text-2xl font-semibold">
@@ -39,16 +39,16 @@ const socialItems = computed(() => {
               </h2>
             </div>
           </div>
-          <p class="max-w-xl text-sm leading-7 text-[color:var(--text-secondary)]">
+          <p class="max-w-xl text-sm leading-7 text-(--text-secondary)">
             {{ settings?.footerNote }}
           </p>
         </div>
 
         <div class="space-y-4">
-          <p class="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--text-muted)]">
+          <p class="text-xs font-black uppercase tracking-[0.3em] text-(--text-muted)">
             İletişim
           </p>
-          <div class="space-y-3 text-sm text-[color:var(--text-secondary)]">
+          <div class="space-y-3 text-sm text-(--text-secondary)">
             <p>{{ settings?.address }}</p>
             <p>{{ settings?.phone }}</p>
             <a :href="`mailto:${settings?.email}`">{{ settings?.email }}</a>
@@ -56,7 +56,7 @@ const socialItems = computed(() => {
         </div>
 
         <div class="space-y-4">
-          <p class="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--text-muted)]">
+          <p class="text-xs font-black uppercase tracking-[0.3em] text-(--text-muted)">
             Sosyal
           </p>
           <div class="flex flex-wrap gap-3">
@@ -68,7 +68,7 @@ const socialItems = computed(() => {
               :title="item.label"
               target="_blank"
               rel="noreferrer"
-              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--surface-border)] bg-white/80 text-[color:var(--brand-blue)] transition hover:-translate-y-0.5 hover:border-[color:var(--brand-green)] hover:text-[color:var(--brand-green)]"
+              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-(--surface-border) bg-white/80 text-(--brand-blue) transition hover:-translate-y-0.5 hover:border-(--brand-green) hover:text-(--brand-green)"
             >
               <SiteSocialIcon :name="item.icon" />
             </a>
@@ -78,7 +78,7 @@ const socialItems = computed(() => {
 
       <div class="thin-divider my-8" />
 
-      <p class="text-sm text-[color:var(--text-muted)]">
+      <p class="text-sm text-(--text-muted)">
         © {{ new Date().getFullYear() }} {{ settings?.siteName || 'DMC Otomasyon' }}. Tüm hakları saklıdır.
       </p>
     </UContainer>
