@@ -14,14 +14,17 @@ const href = computed(() => buildWhatsAppLink(props.phone, props.message))
 </script>
 
 <template>
-  <a
-    :href="href"
+  <UButton
+    :to="href"
     target="_blank"
-    rel="noreferrer"
-    class="button-whatsapp"
-    :class="fullWidth ? 'w-full' : ''"
+    size="lg"
+    color="primary"
+    :block="fullWidth"
+    class="button-whatsapp border-0"
   >
-    <UIcon name="mdi:whatsapp" class="h-5 w-5" />
-    <span>WhatsApp Sipariş</span>
-  </a>
+    <template #leading>
+      <UIcon name="mdi:whatsapp" class="h-5 w-5" />
+    </template>
+    WhatsApp Sipariş
+  </UButton>
 </template>

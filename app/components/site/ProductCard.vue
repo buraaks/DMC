@@ -23,7 +23,7 @@ function openCard() {
 
 <template>
   <article
-    class="surface-panel-strong card-lift group flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.75rem]"
+    class="surface-panel-strong card-lift group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl"
     @click="openCard"
   >
     <div class="relative aspect-16/11 overflow-hidden">
