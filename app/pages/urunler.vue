@@ -91,7 +91,7 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <UContainer class="space-y-12 pb-12">
+  <UContainer class="space-y-12 pb-12 pt-4 md:pt-6">
     <section class="surface-panel-strong rounded-[2.4rem] p-8 md:p-10 mt-6 lg:mt-8">
       <div class="space-y-4">
         <h1 class="section-heading">

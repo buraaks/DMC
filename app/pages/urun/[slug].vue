@@ -21,7 +21,6 @@ if (!product.value) {
 }
 
 const siteSettings = computed(() => settings.value ?? defaultSiteSettings)
-const brand = computed(() => (brands.value ?? []).find(item => item.id === product.value?.brandId))
 const primaryImagePath = computed(() => getPrimaryProductImagePath(product.value?.imagePaths ?? []))
 const relatedProducts = computed(() => {
   if (!product.value) {
@@ -41,7 +40,7 @@ useSeoMeta({
 
 useJsonLd(() => ([
   buildOrganizationSchema(siteUrl.value, siteSettings.value),
-  buildProductSchema(siteUrl.value, product.value!, brand.value?.name),
+  buildProductSchema(siteUrl.value, product.value!),
   buildBreadcrumbSchema(siteUrl.value, [
     { name: 'Anasayfa', path: '/' },
     { name: 'Ürünler', path: '/urunler' },
@@ -51,21 +50,14 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <UContainer class="space-y-12 pb-12">
-    <section class="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+  <UContainer class="space-y-12 pb-12 pt-4 md:pt-6">
+    <section class="grid items-start gap-8 lg:grid-cols-[1fr_0.95fr]">
       <SiteProductGallery
         :image-paths="product!.imagePaths"
         :product-name="product!.name"
       />
 
       <div class="surface-panel-strong space-y-6 rounded-[2rem] p-8">
-        <div class="flex flex-wrap items-center gap-3">
-          <span v-if="brand" class="muted-chip">
-            {{ brand.name }}
-          </span>
-          <SiteStockBadge :status="product!.stockStatus" />
-        </div>
-
         <div class="space-y-4">
           <p class="text-xs font-black uppercase tracking-[0.28em] text-[color:var(--text-muted)]">
             {{ product!.category }}
@@ -73,7 +65,7 @@ useJsonLd(() => ([
           <h1 class="section-heading text-4xl md:text-5xl">
             {{ product!.name }}
           </h1>
-          <p class="text-base leading-8 text-[color:var(--text-secondary)]">
+          <p class="text-base leading-8 text-[color:var(--text-primary)]">
             {{ product!.shortDescription }}
           </p>
         </div>
@@ -84,11 +76,11 @@ useJsonLd(() => ([
           <p class="field-label">
             Teknik Bilgiler
           </p>
-          <ul class="grid gap-3">
+          <ul class="list-disc space-y-2 pl-5">
             <li
               v-for="detail in product!.technicalDetails"
               :key="detail"
-              class="surface-panel rounded-2xl px-4 py-3 text-sm leading-7 text-[color:var(--text-secondary)]"
+              class="text-sm leading-7 text-[color:var(--text-primary)]"
             >
               {{ detail }}
             </li>

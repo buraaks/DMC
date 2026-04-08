@@ -37,12 +37,6 @@ function openCard() {
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         loading="lazy"
       >
-      <div class="absolute inset-x-4 top-4 flex items-center justify-between gap-3">
-        <span v-if="brandName" class="muted-chip">
-          {{ brandName }}
-        </span>
-        <SiteStockBadge :status="product.stockStatus" />
-      </div>
     </div>
 
     <div class="flex flex-1 flex-col gap-4 p-5">

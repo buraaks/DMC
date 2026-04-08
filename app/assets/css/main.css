@@ -114,9 +114,9 @@ a {
   }
 
   .button-whatsapp {
-    background: linear-gradient(135deg, #0b6b52, #28b586);
-    color: white;
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #159a74, #3bc99d);
+    color: #fff;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold !text-white transition-transform duration-300 hover:-translate-y-0.5;
   }
 
   .muted-chip {

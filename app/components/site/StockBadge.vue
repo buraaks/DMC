@@ -9,14 +9,14 @@ const props = defineProps<{
 
 const tone = computed(() => {
   if (props.status === 'stokta') {
-    return 'bg-emerald-500/15 text-emerald-700'
+    return 'text-emerald-700'
   }
 
   if (props.status === 'sinirli') {
-    return 'bg-amber-500/15 text-amber-700'
+    return 'text-amber-700'
   }
 
-  return 'bg-sky-500/15 text-sky-700'
+  return 'text-sky-700'
 })
 </script>
 
