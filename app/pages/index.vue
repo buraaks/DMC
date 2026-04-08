@@ -22,6 +22,7 @@ const featuredProducts = computed(() => {
     ? selectedProducts
     : (products.value ?? []).filter(product => product.featured).slice(0, 5)
 })
+const featuredProductsForHome = computed(() => featuredProducts.value.slice(0, 4))
 
 const heroSliderRef = ref<HTMLElement | null>(null)
 function scrollHero(direction: 'left' | 'right') {
@@ -128,7 +129,7 @@ useJsonLd(() => ([
           </h2>
         </div>
         <div class="flex items-center gap-4">
-          <div class="hidden md:flex gap-2">
+          <div class="flex gap-2 md:hidden">
             <button class="flex h-10 w-10 items-center justify-center rounded-full surface-panel-strong transition-colors hover:bg-[color:var(--brand-green)] hover:text-white" @click="scrollFeatured('left')">
               <UIcon name="lucide:chevron-left" class="h-5 w-5" />
             </button>
@@ -137,7 +138,7 @@ useJsonLd(() => ([
             </button>
           </div>
           <NuxtLink to="/urunler" class="button-secondary justify-center">
-            Tüm Ürünleri Aç
+            Tüm Ürünleri Göster
           </NuxtLink>
         </div>
       </div>
@@ -145,15 +146,18 @@ useJsonLd(() => ([
       <div class="relative -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
         <div 
           ref="featuredSliderRef"
-          class="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          class="flex snap-x snap-mandatory gap-5 overflow-x-auto pt-3 pb-6 [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent_0,black_18px,black_calc(100%-18px),transparent_100%)] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:overflow-visible md:pt-0 md:[mask-image:none] lg:grid-cols-4"
         >
           <SiteProductCard
-            v-for="product in featuredProducts"
+            v-for="(product, index) in featuredProductsForHome"
             :key="product.id"
             :product="product"
             :brand-name="brandList.find(brand => brand.id === product.brandId)?.name"
             :whatsapp-number="siteSettings.whatsappNumber"
-            class="w-[80vw] min-w-[280px] shrink-0 snap-start sm:w-[300px]"
+            :class="[
+              'w-[80vw] min-w-[280px] shrink-0 snap-start sm:w-[300px] md:w-auto md:min-w-0 md:shrink md:snap-none',
+              index === 3 ? 'md:hidden lg:block' : ''
+            ]"
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Brand, Product } from '~~/shared/catalog'
-import { reactive, ref, watch } from 'vue'
+import type { Brand, Product, StockStatus } from '~~/shared/catalog'
+import { computed, reactive, ref, watch } from 'vue'
 import { createSlugFromText } from '~~/shared/catalog'
 
 const props = defineProps<{
@@ -14,9 +14,64 @@ const route = useRoute()
 const { uploadImage, uploading, uploadError } = useHostUpload()
 
 const statusMessage = ref('')
+const warningMessage = ref('')
 const errorMessage = ref('')
 const saving = ref(false)
 const deleteRequested = ref(false)
+const pendingUpload = ref<File | null>(null)
+
+const stockStatusItems: Array<{ label: string, value: StockStatus }> = [
+  { label: 'Stokta', value: 'stokta' },
+  { label: 'Sınırlı Stok', value: 'sinirli' },
+  { label: 'Temin Edilir', value: 'temin' },
+]
+
+const formFieldUi = {
+  label: 'text-[0.75rem] font-bold uppercase tracking-[0.2em] text-[color:var(--text-muted)]',
+  container: 'mt-2',
+  description: 'mt-2 text-sm leading-6 text-[color:var(--text-muted)]',
+  help: 'mt-2 text-xs text-[color:var(--text-muted)]',
+  error: 'mt-2 text-sm text-red-500',
+} as const
+
+const controlShellClass = 'w-full rounded-2xl border border-[color:var(--surface-border)] bg-[color:var(--surface-panel-strong)] px-4 py-3 text-sm text-[color:var(--text-primary)] shadow-none transition placeholder:text-[color:var(--text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-green)]'
+
+const inputUi = {
+  base: controlShellClass,
+} as const
+
+const textareaUi = {
+  base: `${controlShellClass} min-h-32 resize-y`,
+} as const
+
+const selectUi = {
+  base: `${controlShellClass} justify-between`,
+  placeholder: 'text-[color:var(--text-muted)]',
+  content: 'rounded-2xl border border-[color:var(--surface-border)] bg-white p-1 shadow-[var(--shadow-soft)]',
+  item: 'rounded-xl px-3 py-2 text-sm text-[color:var(--text-primary)] data-highlighted:not-data-disabled:before:bg-[color:var(--brand-blue-soft)]/60',
+  itemDescription: 'text-[color:var(--text-muted)]',
+  separator: 'bg-[color:var(--surface-border)]',
+} as const
+
+const checkboxUi = {
+  root: 'rounded-[1.5rem] border border-[color:var(--surface-border)] bg-[color:var(--surface-panel)] px-4 py-4 shadow-[var(--shadow-soft)] has-data-[state=checked]:border-[color:var(--brand-green)] has-data-[state=checked]:bg-[color:var(--brand-green-soft)]/50',
+  label: 'text-sm font-semibold text-[color:var(--text-primary)]',
+  description: 'mt-1 text-sm leading-6 text-[color:var(--text-secondary)]',
+  wrapper: 'w-full',
+} as const
+
+const checkboxGroupUi = {
+  item: 'rounded-[1.4rem] border border-[color:var(--surface-border)] bg-[color:var(--surface-panel)] px-4 py-3 shadow-[var(--shadow-soft)] has-data-[state=checked]:border-[color:var(--brand-green)] has-data-[state=checked]:bg-[color:var(--brand-green-soft)]/40',
+  label: 'text-sm font-semibold text-[color:var(--text-primary)]',
+  description: 'mt-1 text-xs uppercase tracking-[0.18em] text-[color:var(--text-muted)]',
+} as const
+
+const fileUploadUi = {
+  base: 'rounded-[1.75rem] border border-dashed border-[color:var(--surface-border)] bg-[color:var(--surface-panel-strong)] p-4 hover:bg-[color:var(--brand-blue-soft)]/20',
+  wrapper: 'items-start text-left',
+  label: 'mt-0 text-sm font-semibold text-[color:var(--text-primary)]',
+  description: 'mt-1 text-xs text-[color:var(--text-muted)]',
+} as const
 
 function createFormState(product?: Product | null) {
   return {
@@ -37,39 +92,80 @@ function createFormState(product?: Product | null) {
   }
 }
 
-const form = reactive(createFormState(props.initialProduct))
+type ProductFormState = ReturnType<typeof createFormState>
+
+const form = reactive<ProductFormState>(createFormState(props.initialProduct))
+
+const brandItems = computed(() => [
+  { label: 'Marka Seçin', value: '' },
+  ...props.brands.map(brand => ({
+    label: brand.name,
+    value: brand.id,
+  })),
+])
+
+const relatedProductItems = computed(() => props.products
+  .filter(product => product.id !== props.initialProduct?.id)
+  .map(product => ({
+    label: product.name,
+    description: product.category,
+    value: product.id,
+  })))
+
+const previewHref = computed(() => {
+  const slug = (form.slug || createSlugFromText(form.name)).trim()
+  return slug ? `/urun/${slug}` : ''
+})
 
 watch(() => props.initialProduct, (product) => {
   Object.assign(form, createFormState(product))
+  deleteRequested.value = false
+  warningMessage.value = ''
+  pendingUpload.value = null
 })
 
-async function onUploadChange(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
+function validateProductForm(state: Partial<ProductFormState>) {
+  const errors = []
 
+  if (!state.name?.trim()) {
+    errors.push({
+      name: 'name',
+      message: 'Ürün adı gerekli.',
+    })
+  }
+
+  return errors
+}
+
+async function handleUploadSelection(file: File | null | undefined) {
   if (!file) {
     return
   }
 
+  warningMessage.value = ''
+  errorMessage.value = ''
+
   try {
     const imagePath = await uploadImage(file)
     form.imagePaths = [...form.imagePaths, imagePath]
-    statusMessage.value = 'Görsel yüklendi.'
+    statusMessage.value = `"${file.name}" eklendi.`
   }
   catch {
     errorMessage.value = uploadError.value || 'Görsel yüklenemedi.'
   }
   finally {
-    input.value = ''
+    pendingUpload.value = null
   }
 }
 
 function removeImage(imagePath: string) {
   form.imagePaths = form.imagePaths.filter(path => path !== imagePath)
+  warningMessage.value = ''
 }
 
 async function saveProduct() {
   statusMessage.value = ''
+  warningMessage.value = ''
   errorMessage.value = ''
   saving.value = true
 
@@ -107,6 +203,7 @@ async function saveProduct() {
       body: payload,
     })
 
+    deleteRequested.value = false
     statusMessage.value = 'Ürün kaydedildi.'
     await refreshNuxtData()
   }
@@ -125,188 +222,340 @@ async function deleteProduct() {
 
   if (!deleteRequested.value) {
     deleteRequested.value = true
-    errorMessage.value = 'Bu ürünü silmek istediğinize emin misiniz? Tekrar tıklarsanız ürün kalıcı olarak silinir.'
+    warningMessage.value = 'Bu ürünü silmek istediğinize emin misiniz? Tekrar tıklarsanız ürün kalıcı olarak silinir.'
     return
   }
 
-  await $fetch(`/api/host/products/${props.initialProduct.id}`, {
-    method: 'DELETE',
-  })
+  warningMessage.value = ''
+  errorMessage.value = ''
 
-  await refreshNuxtData()
-  await navigateTo('/host/urunler')
+  try {
+    await $fetch(`/api/host/products/${props.initialProduct.id}`, {
+      method: 'DELETE',
+    })
+
+    await refreshNuxtData()
+    await navigateTo('/host/urunler')
+  }
+  catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Silme işlemi başarısız oldu.'
+  }
 }
 </script>
 
 <template>
-  <form class="space-y-8" @submit.prevent="saveProduct">
+  <UForm
+    :state="form"
+    :validate="validateProductForm"
+    :loading-auto="false"
+    class="space-y-8"
+    @submit="saveProduct"
+  >
     <section class="grid gap-6 xl:grid-cols-[1fr_0.85fr]">
       <div class="space-y-5">
-        <div>
-          <label class="field-label" for="product-name">Ürün Adı</label>
-          <input id="product-name" v-model="form.name" class="input-shell" required>
-        </div>
-        <div>
-          <label class="field-label" for="product-slug">Slug</label>
-          <input id="product-slug" v-model="form.slug" class="input-shell" placeholder="otomatik olusturulur">
-        </div>
-        <div>
-          <label class="field-label" for="product-short-description">Kısa Açıklama</label>
-          <textarea id="product-short-description" v-model="form.shortDescription" class="textarea-shell" />
-        </div>
-        <div>
-          <label class="field-label" for="product-price">Fiyat Bilgisi</label>
-          <input id="product-price" v-model="form.priceText" class="input-shell" placeholder="Örn: 12.500 TL + KDV">
-        </div>
-        <div>
-          <label class="field-label" for="product-technical-details">Teknik Bilgiler</label>
-          <textarea
+        <UFormField
+          name="name"
+          label="Ürün Adı"
+          required
+          :ui="formFieldUi"
+        >
+          <UInput
+            id="product-name"
+            v-model="form.name"
+            variant="none"
+            :ui="inputUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="slug"
+          label="Slug"
+          help="Boş bırakırsanız ürün adına göre otomatik oluşturulur."
+          :ui="formFieldUi"
+        >
+          <UInput
+            id="product-slug"
+            v-model="form.slug"
+            variant="none"
+            :ui="inputUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="shortDescription"
+          label="Kısa Açıklama"
+          :ui="formFieldUi"
+        >
+          <UTextarea
+            id="product-short-description"
+            v-model="form.shortDescription"
+            variant="none"
+            autoresize
+            :rows="4"
+            :ui="textareaUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="priceText"
+          label="Fiyat Bilgisi"
+          :ui="formFieldUi"
+        >
+          <UInput
+            id="product-price"
+            v-model="form.priceText"
+            variant="none"
+            placeholder="Örn: 12.500 TL + KDV"
+            :ui="inputUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="technicalDetailsText"
+          label="Teknik Bilgiler"
+          help="Her satıra bir teknik bilgi girin."
+          :ui="formFieldUi"
+        >
+          <UTextarea
             id="product-technical-details"
             v-model="form.technicalDetailsText"
-            class="textarea-shell"
-            placeholder="Her satıra bir teknik bilgi girin"
+            variant="none"
+            autoresize
+            :rows="6"
+            :maxrows="12"
+            :ui="textareaUi"
           />
-        </div>
+        </UFormField>
       </div>
 
       <div class="space-y-5">
-        <div>
-          <label class="field-label" for="product-brand">Marka</label>
-          <select id="product-brand" v-model="form.brandId" class="select-shell">
-            <option value="">
-              Marka Seçin
-            </option>
-            <option v-for="brand in brands" :key="brand.id" :value="brand.id">
-              {{ brand.name }}
-            </option>
-          </select>
-        </div>
-        <div>
-          <label class="field-label" for="product-category">Kategori</label>
-          <input id="product-category" v-model="form.category" class="input-shell">
-        </div>
-        <div>
-          <label class="field-label" for="product-stock-status">Stok Durumu</label>
-          <select id="product-stock-status" v-model="form.stockStatus" class="select-shell">
-            <option value="stokta">
-              Stokta
-            </option>
-            <option value="sinirli">
-              Sınırlı Stok
-            </option>
-            <option value="temin">
-              Temin Edilir
-            </option>
-          </select>
-        </div>
-        <div>
-          <label class="field-label" for="product-whatsapp-message">WhatsApp Mesajı</label>
-          <textarea id="product-whatsapp-message" v-model="form.whatsappMessage" class="textarea-shell" />
-        </div>
-        <label class="surface-panel flex items-center justify-between rounded-[1.5rem] px-4 py-4">
-          <span class="text-sm font-semibold">Öne çıkan ürünlerde göster</span>
-          <input v-model="form.featured" type="checkbox" class="h-4 w-4">
-        </label>
+        <UFormField
+          name="brandId"
+          label="Marka"
+          :ui="formFieldUi"
+        >
+          <USelect
+            id="product-brand"
+            v-model="form.brandId"
+            :items="brandItems"
+            variant="none"
+            :ui="selectUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="category"
+          label="Kategori"
+          :ui="formFieldUi"
+        >
+          <UInput
+            id="product-category"
+            v-model="form.category"
+            variant="none"
+            :ui="inputUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="stockStatus"
+          label="Stok Durumu"
+          :ui="formFieldUi"
+        >
+          <USelect
+            id="product-stock-status"
+            v-model="form.stockStatus"
+            :items="stockStatusItems"
+            variant="none"
+            :ui="selectUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="whatsappMessage"
+          label="WhatsApp Mesajı"
+          :ui="formFieldUi"
+        >
+          <UTextarea
+            id="product-whatsapp-message"
+            v-model="form.whatsappMessage"
+            variant="none"
+            autoresize
+            :rows="4"
+            :ui="textareaUi"
+          />
+        </UFormField>
+
+        <UCheckbox
+          v-model="form.featured"
+          color="primary"
+          variant="card"
+          indicator="end"
+          label="Öne çıkan ürünlerde göster"
+          description="Seçiliyse anasayfa veya vitrin alanlarında öncelikli gösterilir."
+          :ui="checkboxUi"
+        />
       </div>
     </section>
 
     <section class="grid gap-6 xl:grid-cols-[1fr_1fr]">
       <div class="space-y-5">
-        <div>
-          <label class="field-label" for="product-seo-title">SEO Title</label>
-          <input id="product-seo-title" v-model="form.seoTitle" class="input-shell">
-        </div>
-        <div>
-          <label class="field-label" for="product-seo-description">SEO Description</label>
-          <textarea id="product-seo-description" v-model="form.seoDescription" class="textarea-shell" />
-        </div>
-        <div>
-          <label class="field-label" for="product-upload">Ürün Görselleri</label>
-          <input id="product-upload" type="file" accept="image/*" class="input-shell" @change="onUploadChange">
-          <p class="mt-2 text-xs text-[color:var(--text-muted)]">
-            {{ uploading ? 'Görsel yükleniyor...' : 'Yüklenen görseller aşağıya eklenir.' }}
-          </p>
-          <p v-if="uploadError" class="mt-2 text-sm text-red-500">
-            {{ uploadError }}
-          </p>
-        </div>
-        <div class="grid gap-3 md:grid-cols-2">
-          <div
-            v-for="imagePath in form.imagePaths"
-            :key="imagePath"
-            class="surface-panel rounded-[1.4rem] p-3"
-          >
-            <img :src="imagePath" :alt="imagePath" class="aspect-[4/3] w-full rounded-2xl object-cover">
-            <button type="button" class="button-secondary mt-3 w-full justify-center" @click="removeImage(imagePath)">
-              Görseli Kaldır
-            </button>
+        <UFormField
+          name="seoTitle"
+          label="SEO Title"
+          :ui="formFieldUi"
+        >
+          <UInput
+            id="product-seo-title"
+            v-model="form.seoTitle"
+            variant="none"
+            :ui="inputUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="seoDescription"
+          label="SEO Description"
+          :ui="formFieldUi"
+        >
+          <UTextarea
+            id="product-seo-description"
+            v-model="form.seoDescription"
+            variant="none"
+            autoresize
+            :rows="4"
+            :ui="textareaUi"
+          />
+        </UFormField>
+
+        <UFormField
+          name="imagePaths"
+          label="Ürün Görselleri"
+          help="Yüklenen görseller aşağıdaki listeye eklenir."
+          :ui="formFieldUi"
+        >
+          <div class="space-y-4">
+            <UFileUpload
+              v-model="pendingUpload"
+              accept="image/*"
+              color="primary"
+              highlight
+              label="Görsel yükleyin"
+              description="PNG, JPG veya WebP dosyası ekleyebilirsiniz."
+              :disabled="uploading"
+              :ui="fileUploadUi"
+              @update:model-value="handleUploadSelection"
+            />
+
+            <UAlert
+              v-if="uploading"
+              color="info"
+              variant="soft"
+              icon="lucide:loader-circle"
+              title="Görsel yükleniyor..."
+              class="rounded-[1.5rem]"
+            />
+
+            <div v-if="form.imagePaths.length" class="grid gap-3 md:grid-cols-2">
+              <div
+                v-for="imagePath in form.imagePaths"
+                :key="imagePath"
+                class="surface-panel rounded-[1.4rem] p-3"
+              >
+                <img :src="imagePath" :alt="imagePath" class="aspect-[4/3] w-full rounded-2xl object-cover">
+                <UButton
+                  type="button"
+                  color="neutral"
+                  variant="outline"
+                  block
+                  class="mt-3 rounded-full"
+                  @click="removeImage(imagePath)"
+                >
+                  Görseli Kaldır
+                </UButton>
+              </div>
+            </div>
           </div>
-        </div>
+        </UFormField>
       </div>
 
       <div class="space-y-4">
-        <p class="field-label">
-          Benzer Ürünler
-        </p>
-        <div class="grid gap-3">
-          <label
-            v-for="product in products.filter(item => item.id !== initialProduct?.id)"
-            :key="product.id"
-            class="surface-panel flex items-start gap-3 rounded-[1.4rem] px-4 py-3"
-          >
-            <input
-              v-model="form.relatedProductIds"
-              :value="product.id"
-              type="checkbox"
-              class="mt-1 h-4 w-4"
-            >
-            <div>
-              <p class="text-sm font-semibold">
-                {{ product.name }}
-              </p>
-              <p class="mt-1 text-xs uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
-                {{ product.category }}
-              </p>
-            </div>
-          </label>
-        </div>
+        <UFormField
+          name="relatedProductIds"
+          label="Benzer Ürünler"
+          description="Detay sayfasında birlikte önerilecek ürünleri seçin."
+          :ui="formFieldUi"
+        >
+          <UCheckboxGroup
+            v-model="form.relatedProductIds"
+            :items="relatedProductItems"
+            color="primary"
+            :ui="checkboxGroupUi"
+          />
+        </UFormField>
       </div>
     </section>
 
-    <div class="flex flex-col gap-3 border-t border-[color:var(--surface-border)] pt-6 md:flex-row md:items-center md:justify-between">
+    <div class="flex flex-col gap-4 border-t border-[color:var(--surface-border)] pt-6 md:flex-row md:items-start md:justify-between">
       <div class="flex flex-wrap gap-3">
-        <button type="submit" class="button-primary" :disabled="saving">
+        <UButton type="submit" color="primary" class="rounded-full px-5 py-3">
           {{ saving ? 'Kaydediliyor...' : 'Kaydet' }}
-        </button>
-        <NuxtLink
-          v-if="form.slug"
-          :to="`/urun/${form.slug}`"
+        </UButton>
+
+        <UButton
+          v-if="previewHref"
+          :to="previewHref"
           target="_blank"
-          class="button-secondary"
+          color="neutral"
+          variant="outline"
+          class="rounded-full px-5 py-3"
         >
           Önizleme
-        </NuxtLink>
-        <button
+        </UButton>
+
+        <UButton
           v-if="mode === 'edit'"
           type="button"
-          class="button-secondary"
+          color="error"
+          variant="outline"
+          class="rounded-full px-5 py-3"
           @click="deleteProduct"
         >
           {{ deleteRequested ? 'Silmeyi Onayla' : 'Ürünü Sil' }}
-        </button>
+        </UButton>
       </div>
 
-      <div class="text-sm">
-        <p v-if="statusMessage" class="text-emerald-600">
-          {{ statusMessage }}
-        </p>
-        <p v-if="errorMessage" class="text-red-500">
-          {{ errorMessage }}
-        </p>
-        <p class="mt-1 text-[color:var(--text-muted)]">
+      <div class="space-y-3 text-sm md:max-w-xl">
+        <UAlert
+          v-if="statusMessage"
+          color="success"
+          variant="soft"
+          icon="lucide:check-circle-2"
+          :title="statusMessage"
+          class="rounded-[1.5rem]"
+        />
+
+        <UAlert
+          v-if="warningMessage"
+          color="warning"
+          variant="soft"
+          icon="lucide:triangle-alert"
+          :title="warningMessage"
+          class="rounded-[1.5rem]"
+        />
+
+        <UAlert
+          v-if="errorMessage"
+          color="error"
+          variant="soft"
+          icon="lucide:circle-alert"
+          :title="errorMessage"
+          class="rounded-[1.5rem]"
+        />
+
+        <p class="text-[color:var(--text-muted)]">
           {{ mode === 'create' ? 'Yeni ürün kaydı oluşturuluyor.' : `Düzenlenen ürün kimliği: ${route.params.id || initialProduct?.id}` }}
         </p>
       </div>
     </div>
-  </form>
+  </UForm>
 </template>

@@ -141,7 +141,7 @@ async function saveSettings() {
 
       <section class="space-y-4">
         <p class="field-label">
-          Anasayfada Gösterilecek 5 Ürün
+          Anasayfada Gösterilecek 4 Ürün
         </p>
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           <label

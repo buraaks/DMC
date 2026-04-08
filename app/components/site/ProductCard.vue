@@ -24,7 +24,11 @@ function openCard() {
 <template>
   <article
     class="surface-panel-strong card-lift group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl"
+    role="link"
+    tabindex="0"
     @click="openCard"
+    @keydown.enter="openCard"
+    @keydown.space.prevent="openCard"
   >
     <div class="relative aspect-16/11 overflow-hidden">
       <img
@@ -57,7 +61,7 @@ function openCard() {
       <div class="mt-auto pt-2 space-y-4">
         <div class="flex items-center gap-2 font-medium">
           <UIcon name="lucide:tag" class="h-4.5 w-4.5 text-(--brand-green)" />
-          <span :class="product.priceText ? 'text-lg text-(--text-main)' : 'text-sm text-(--text-secondary)'">
+          <span :class="product.priceText ? 'text-lg text-[color:var(--text-primary)]' : 'text-sm text-(--text-secondary)'">
             {{ product.priceText || 'Fiyat için iletişime geçin' }}
           </span>
         </div>
