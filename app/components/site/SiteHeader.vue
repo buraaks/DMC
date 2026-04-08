@@ -24,7 +24,7 @@ function isActive(target: string) {
   <UHeader
     class="fixed inset-x-0 top-0 z-40 bg-transparent px-4 sm:px-6 lg:px-8"
     :ui="{
-      root: 'border-none',
+      root: 'border-none bg-transparent backdrop-blur-none shadow-none',
       container: 'mx-auto px-4 sm:px-6 lg:px-10 max-w-[88rem] mt-4 surface-panel rounded-full py-8 md:px-6 flex items-center justify-between gap-4',
       toggle: 'surface-panel inline-flex h-11 w-11 items-center justify-center rounded-full text-xl md:hidden',
     }"

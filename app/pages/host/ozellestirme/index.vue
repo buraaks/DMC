@@ -104,7 +104,7 @@ async function saveSettings() {
               <div v-for="(path, i) in form.hero.imagePaths" :key="i" class="relative group">
                 <img :src="path" alt="Banner görseli" class="aspect-[16/10] w-full rounded-[1rem] object-cover">
                 <button type="button" @click="form.hero.imagePaths.splice(i, 1)" class="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-black shadow hover:bg-red-500 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  <UIcon name="lucide:x" class="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>

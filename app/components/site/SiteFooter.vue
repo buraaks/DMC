@@ -19,7 +19,7 @@ const socialItems = computed(() => {
 </script>
 
 <template>
-  <footer class="mt-24 border-t border-(--surface-border) bg-[linear-gradient(180deg,rgba(248,251,255,0.92),rgba(231,239,247,0.98))] text-(--text-primary)">
+  <UFooter class="mt-24 border-t border-(--surface-border) bg-[linear-gradient(180deg,rgba(248,251,255,0.92),rgba(231,239,247,0.98))] text-(--text-primary)">
     <UContainer class="py-14">
       <div class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.7fr]">
         <div class="space-y-5">
@@ -70,7 +70,7 @@ const socialItems = computed(() => {
               rel="noreferrer"
               class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-(--surface-border) bg-white/80 text-(--brand-blue) transition hover:-translate-y-0.5 hover:border-(--brand-green) hover:text-(--brand-green)"
             >
-              <SiteSocialIcon :name="item.icon" />
+              <UIcon :name="item.icon" class="h-5 w-5" />
             </a>
           </div>
         </div>
@@ -82,5 +82,5 @@ const socialItems = computed(() => {
         © {{ new Date().getFullYear() }} {{ settings?.siteName || 'DMC Otomasyon' }}. Tüm hakları saklıdır.
       </p>
     </UContainer>
-  </footer>
+  </UFooter>
 </template>

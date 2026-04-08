@@ -5,11 +5,13 @@ const { data: settings } = await useAsyncData<SiteSettings>('site-settings', () 
 </script>
 
 <template>
-  <div class="relative min-h-screen">
+  <div>
     <SiteHeader :settings="settings || undefined" />
-    <main class="pt-24 md:pt-28">
+
+    <UMain>
       <slot />
-    </main>
+    </UMain>
+
     <SiteFooter :settings="settings || undefined" />
   </div>
 </template>

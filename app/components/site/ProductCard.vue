@@ -26,7 +26,7 @@ function openCard() {
     class="surface-panel-strong card-lift group flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.75rem]"
     @click="openCard"
   >
-    <div class="relative aspect-[16/11] overflow-hidden">
+    <div class="relative aspect-16/11 overflow-hidden">
       <img
         :src="primaryImagePath"
         :alt="product.name"
@@ -43,21 +43,21 @@ function openCard() {
 
     <div class="flex flex-1 flex-col gap-4 p-5">
       <div class="space-y-3">
-        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--text-muted)]">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-(--text-muted)">
           {{ product.category }}
         </p>
         <h3 class="text-xl font-semibold leading-tight">
           {{ product.name }}
         </h3>
-        <p class="line-clamp-3 text-sm leading-6 text-[color:var(--text-secondary)]">
+        <p class="line-clamp-3 text-sm leading-6 text-(--text-secondary)">
           {{ product.shortDescription }}
         </p>
       </div>
 
       <div class="mt-auto pt-2 space-y-4">
         <div class="flex items-center gap-2 font-medium">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[color:var(--brand-green)]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-          <span :class="product.priceText ? 'text-lg text-[color:var(--text-main)]' : 'text-sm text-[color:var(--text-secondary)]'">
+          <UIcon name="lucide:tag" class="h-4.5 w-4.5 text-(--brand-green)" />
+          <span :class="product.priceText ? 'text-lg text-(--text-main)' : 'text-sm text-(--text-secondary)'">
             {{ product.priceText || 'Fiyat için iletişime geçin' }}
           </span>
         </div>
