@@ -54,12 +54,12 @@ useJsonLd(() => ([
 </script>
 
 <template>
-  <div class="space-y-20 pb-10 md:space-y-28">
-    <section class="px-4 sm:px-6 lg:px-10">
+  <div class="space-y-20 pt-12 pb-10 md:space-y-28 md:pt-16 lg:pt-20">
+    <UContainer as="section">
       <div class="group relative overflow-hidden rounded-[2.2rem] border border-black/5 bg-[color:var(--surface-panel-strong)] shadow-[0_24px_70px_rgba(15,23,42,0.12)]">
         <div 
           ref="heroSliderRef"
-          class="relative flex min-h-[13rem] snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] md:min-h-[16rem] lg:min-h-[18rem] [&::-webkit-scrollbar]:hidden"
+          class="relative flex aspect-video sm:aspect-21/9 md:aspect-2.5/1 lg:aspect-3/1 snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <template v-if="siteSettings.hero.imagePaths && siteSettings.hero.imagePaths.length">
             <img
@@ -67,7 +67,7 @@ useJsonLd(() => ([
               :key="i"
               :src="path"
               :alt="siteSettings.siteName"
-              class="h-full w-full shrink-0 snap-center object-cover aspect-[21/9] sm:aspect-auto"
+              class="h-full w-full shrink-0 snap-center object-cover"
             >
           </template>
           <div
@@ -88,7 +88,7 @@ useJsonLd(() => ([
           <UIcon name="lucide:chevron-right" class="h-5 w-5" />
         </button>
       </div>
-    </section>
+    </UContainer>
 
     <UContainer as="section" class="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
       <div class="space-y-5">
